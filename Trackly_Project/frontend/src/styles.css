@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+  /*background-color: #37306B;*/
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #37306B;
+  color: #D27685;
+}
+
+.App {
+  text-align: center;
+}
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+/*typeface*/
+
+
+#tile a {
+  /*font-family: 'Ultra', serif;*/
+  font-family: 'Montserrat', sans-serif;
+  color: #D27685;
+}
+
+/* navbar */
+/*bootstrap one */
+/*#nav-bar {*/
+/*  gap: 2rem;*/
+/*  padding: 0 1rem;*/
+/*  align-items: center;*/
+/*}*/
+.nav li {
+  list-style-type: none;
+}
+
+#nav-bar {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  /*width: 300px;*/
+  height: 50%;
+  width:100%;
+  background-color: #282c34;
+  background-color: #9E4784;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+/* removing preset styles and adding flexbox */
+.nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+/*.nav-logo {*/
+/*  width: 20px;*/
+/*  height: 20px;*/
+/*  margin: 0;*/
+/*  gap: 1rem;*/
+/*}*/
+#nav-logo {
+width: 30px;
+height: 30px;
+}
+#title {
+  font-size: 2rem;
+}
+/*.nav a {*/
+/* text-decoration: none;*/
+/*}*/
+.nav a:hover {
+  text-decoration: underline;
+}
+#title:hover {
+  text-decoration: none;
+}
+/*@media screen*/

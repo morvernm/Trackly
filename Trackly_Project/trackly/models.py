@@ -11,4 +11,9 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+# class Review(models.Model):
+
+# class Artist(models.Model):
+
+# class Album(models.Model):
 
