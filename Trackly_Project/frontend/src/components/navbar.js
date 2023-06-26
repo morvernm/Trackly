@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import logo from "../logo.svg";
 // import Container from 'react-bootstrap/Container';
 // import Navbar from 'react-bootstrap/Navbar';
-import {NavLink, Navbar, Nav} from "react-bootstrap";
+import {Navbar, Nav} from "react-bootstrap";
 export const Menu = () => {
     return (
           // Used React Bootstrap documentation for Navbar.Brand code
