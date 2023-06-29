@@ -3,13 +3,17 @@ export const Main = () => {
 
     return (
            <div>
+                <h1>Trackly</h1> <br />
                 <img src={logo} className="App-logo" alt="logo" />
-               <h1>Trackly</h1>
-
-             <p>Welcome to trackly - share your reviews and connect with music lovers</p>
+               <h2> Connect. Discover. </h2>
+            <br />
+             <span>Welcome to Trackly - share your reviews and connect with music lovers</span>
+                <br />
+                <br />
                <card>
-                   <h1>Track your music collection</h1>
+                   <h3>Track your music collection</h3>
                </card>
+
         </div>
         );
 

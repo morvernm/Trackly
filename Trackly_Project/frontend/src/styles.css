@@ -7,11 +7,13 @@ body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   background-color: #37306B;
-  color: #D27685;
+  /*color: #D27685;*/
+  color: linen;
 }
 
 .App {
   text-align: center;
+  padding: 100px;
 }
 .App-logo {
   height: 40vmin;
@@ -90,4 +92,27 @@ height: 30px;
   to {
     transform: rotate(360deg);
   }
+}
+
+.login input {
+  padding-top: 20px;
+  /*display: flex;*/
+  /*justify-content: space-evenly;*/
+  /*align-items: center;*/
+  /*flex-direction: column;*/
+  /*width: 50em;*/
+
+}
+
+.login label {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem 1rem;
+}
+
+.login h4 {
+  display: inline;
+  padding: 5px;
 }
