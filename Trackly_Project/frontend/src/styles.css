@@ -1,3 +1,5 @@
+@import '~mdb-ui-kit/css/mdb.min.css';
+
 * {
   box-sizing: border-box;
   /*background-color: #37306B;*/
@@ -11,9 +13,13 @@ body {
   color: linen;
 }
 
+.form-label {
+  color: linen;
+}
+
 .App {
   text-align: center;
-  padding: 100px;
+  padding: 150px;
 }
 .App-logo {
   height: 40vmin;
@@ -29,13 +35,7 @@ body {
   color: #D27685;
 }
 
-/* navbar */
-/*bootstrap one */
-/*#nav-bar {*/
-/*  gap: 2rem;*/
-/*  padding: 0 1rem;*/
-/*  align-items: center;*/
-/*}*/
+/*Nav Bar*/
 .nav li {
   list-style-type: none;
 }
@@ -67,9 +67,7 @@ height: 30px;
 #title {
   font-size: 2rem;
 }
-/*.nav a {*/
-/* text-decoration: none;*/
-/*}*/
+
 .nav a:hover {
   text-decoration: underline;
 }
@@ -115,4 +113,21 @@ height: 30px;
 .login h4 {
   display: inline;
   padding: 5px;
+}
+
+/*Image styling*/
+#album-row {
+  margin: 20px;
+}
+.img-thumbnail {
+  max-width: 150%;
+  /*margin: 10px;*/
+}
+.img-thumbnail:hover, .artist-image:hover {
+  box-shadow: 0 .125rem 1rem;
+  color: #9E4784;
+}
+
+#search-form {
+  display: inline;
 }

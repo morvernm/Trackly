@@ -1,5 +1,5 @@
 from django.contrib import admin
-from Trackly_Project.trackly.models import UserProfile
+# from trackly.models import UserProfile
 
-# Register your models here.
-admin.site.register(UserProfile)
+# SignUp your models here.
+# admin.site.register(UserProfile)
