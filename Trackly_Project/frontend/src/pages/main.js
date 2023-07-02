@@ -1,6 +1,6 @@
 import logo from '../logo.svg'
 import album from '../album-placeholder.png'
-import { Container, Row, Col, Image } from "react-bootstrap"
+import { Container, Card, Button} from "react-bootstrap"
 import { albumGrid } from '../components/albumGrid';
 export const Main = () => {
 
@@ -20,30 +20,20 @@ export const Main = () => {
             {/*could make below a commponent and import it, instead of having all code in here*/}
             <div>
                 {albumGrid()}
-                {/* <Row className="album-row">*/}
-                {/*     <Col className="album-col">*/}
-                {/*         /!*<h4>Artist name</h4>*!/*/}
-                {/*        <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*     </Col>*/}
-                {/*     <Col className="album-col">*/}
-                {/*        <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*    </Col>*/}
-                {/*    <Col className="album-col">*/}
-                {/*        <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*    </Col>*/}
-                {/* </Row>*/}
-                {/*<br />*/}
-                {/* <Row className="album-row">*/}
-                {/*     <Col className="album-col">*/}
-                {/*       <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*     </Col>*/}
-                {/*     <Col className="album-col">*/}
-                {/*       <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*    </Col>*/}
-                {/*    <Col className="album-col">*/}
-                {/*        <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
-                {/*    </Col>*/}
-                {/*</Row>*/}
+
+                 {/*for artist page?*/}
+
+                 <Card style={{ width: '18rem' }}>
+      <Card.Img variant="top" src={album} />
+      <Card.Body>
+        <Card.Title>Card Title</Card.Title>
+        <Card.Text>
+          Some quick example text to build on the card title and make up the
+          bulk of the card's content.
+        </Card.Text>
+        <Button variant="primary">Go somewhere</Button>
+      </Card.Body>
+    </Card>
             </div>
 
                    </Container>

@@ -24,10 +24,11 @@ export const SignUp = () => {
 
                 <Form.Group className="mb-3" controlId="formBasicCountry">
                 <Form.Label>Country</Form.Label>
+                {/*    to make to dropddown */}
                 <Form.Control type="text" placeholder="United Kingdom" />
                 </Form.Group>
 
-                 <Button variant="primary" type="submit"> Sign up </Button>
+                 <Button variant="info" type="submit"> Sign up </Button>
             </Form>
 
         </div>

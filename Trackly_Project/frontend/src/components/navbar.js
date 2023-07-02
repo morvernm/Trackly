@@ -14,7 +14,7 @@ export const Menu = () => {
     return (
           // clasName p3 for padding
           // https://medium.com/swlh/responsive-navbar-using-react-bootstrap-5e0e0bd33bd6
-          <Navbar collapseOnSelect fixed="top" expand="sm" sbg="light" data-bs-theme="dark" id="nav-bar" className="p-3">
+          <Navbar collapseOnSelect fixed="top" expand="sm" bg="light" data-bs-theme="light" id="nav-bar" className="p-3">
               <Container id="nav-container">
                   {/*// Used React Bootstrap documentation for Navbar.Brand code*/}
                     <Navbar.Brand as={Link}to="/">
@@ -26,12 +26,12 @@ export const Menu = () => {
                     {/*<Nav.Link as={Link}to="/search"s onClick={ () => setExpanded(true)}>Search</Nav.Link>*/}
                       <InputGroup className="mb-3">
                           <Form.Control placeholder="Search" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
-                          <Button type="submit" variant="outline-secondary" id="button-addon2"><BiSearch /></Button>
+                          <Button variant="outline-dark" type="submit"  id="button-addon2"><BiSearch /></Button>
                         </InputGroup>
                     <Nav.Link as={Link}to="/inbox">Messages</Nav.Link>
                     <Nav.Link as={Link}to="/profile">Profile </Nav.Link>
                     <Nav.Link as={Link}to="/login">Login</Nav.Link>
-                    <Nav.Link as={Link}to="/signup">Sign up</Nav.Link>
+                    <Nav.Link as={Link}to="/signup">Register</Nav.Link>
                 </Nav>
                   </Navbar.Collapse>
              </Container>

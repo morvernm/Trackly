@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from Trackly_Project.trackly import views
+from trackly import views
 
 urlpatterns = [
     # maps basic url to index view from our views.py file in trackly
-    path('',views.index, name ='index'),
+    path('', views.index, name='index'),
     # mapping urls beginning with trackly/ to trackly's urls.py
     path('trackly/', include('trackly.urls', namespace='trackly')),
     path('admin/', admin.site.urls),
