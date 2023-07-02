@@ -14,14 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.urls import include
+from django.urls import path, include
 from trackly import views
 
 urlpatterns = [
     # maps basic url to index view from our views.py file in trackly
-    path('', views.index, name='index'),
+    # path('', views.index, name='index'),
     # mapping urls beginning with trackly/ to trackly's urls.py
-    path('trackly/', include('trackly.urls', namespace='trackly')),
+    # path('trackly/', include('trackly.urls', namespace='trackly')),
+    path('', include('trackly.urls', namespace='trackly')),
     path('admin/', admin.site.urls),
+    path('api/', include('trackly_api.urls', namespace='trackly_api')),
 ]

@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 #     return self.user.username
 
 class Artist(models.Model):
-    name = models.charField(max_length=250)
+    name = models.CharField(max_length=250)
 
     # songs =
     # albums
@@ -26,17 +26,17 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
-    title = models.charField(max_length=250, on_delete=models.CASCADE)
-    artist = models.ForeignKey(Artist)
+    title = models.CharField(max_length=250)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     # tracklist =
-    reviews = models.ManyToManyField('Review', on_delete=models.CASCADE)
+    # reviews = models.ManyToManyField('Review', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
 
 class Song(models.Model):
-    title = models.charField(max_length=250, on_delete=models.CASCADE)
+    title = models.CharField(max_length=250)
     # artist = models.
 
     def __str__(self):
@@ -57,9 +57,11 @@ class Review(models.Model):
     title = models.CharField(max_length=250)  # title of review
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')  # author of review
     content = models.TextField()  # review content
-    published = models.DateTimeField(default=timezone.now)  # date and time review was published
-    status = models.CharField(max_length=10, choicies=options, default='published')  # status of review
+    published = models.DateTimeField(default=timezone)  # date and time review was published
+    status = models.CharField(max_length=10, choices=options, default='published')  # status of review
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    object = models.manager # default manager returned in queryset
+    reviewObject = ReviewObjects() # review objects - filtered so only returning published posts
 
     class Meta:
         ordering = ('-published',)
