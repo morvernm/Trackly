@@ -6,4 +6,4 @@ from trackly.models import Review
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review  # the model we're using
-        fields = ('id', 'title', 'author', 'content', 'album', 'status')  # specifying the data we want to use
+        fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status')  # specifying the data we want to use

@@ -60,9 +60,16 @@ class Review(models.Model):
     published = models.DateTimeField(default=timezone)  # date and time review was published
     status = models.CharField(max_length=10, choices=options, default='published')  # status of review
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    object = models.manager # default manager returned in queryset
+    objects = models.Manager() # default manager returned in queryset
     reviewObject = ReviewObjects() # review objects - filtered so only returning published posts
 
+    rating_options = [
+        ('L', 'Like'),
+        ('D', 'Dislike'),
+        ('F', 'Favourite'),
+    ]
+    rating = models.CharField(max_length=12, choices=rating_options, default='L')
+    # write fields for getting likes, favourites and dislikes
     class Meta:
         ordering = ('-published',)
 

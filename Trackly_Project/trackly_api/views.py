@@ -17,6 +17,8 @@ class ReviewList(generics.ListCreateAPIView):
 
 # read or delete endpoints for a single review
 # aka get or delete
+# need album id and user id?
 class SingleReview(generics.DestroyAPIView):
-
+    queryset = Review.objects.all()  # getting alll reviews - will allow us to delete drafts too?
+    serializer_class = ReviewSerializer
     pass
