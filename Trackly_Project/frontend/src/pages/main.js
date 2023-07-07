@@ -1,4 +1,5 @@
 import logo from '../logo.svg'
+import record from '../images/droidrec-svgrepo-com.svg'
 import album from '../album-placeholder.png'
 import { Container, Card, Button} from "react-bootstrap"
 import { albumGrid } from '../components/albumGrid';

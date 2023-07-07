@@ -8,7 +8,9 @@
 body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
-  background-color: #37306B;
+  /*background-color: #37306B;*/
+  background-color: #0C134F;
+
   /*color: #D27685;*/
   color: linen;
 }
@@ -19,7 +21,8 @@ body {
 
 .App {
   text-align: center;
-  padding: 150px;
+  /*padding: 150px;*/
+  padding: 30px;
 }
 .App-logo {
   height: 40vmin;
@@ -92,29 +95,45 @@ height: 30px;
   }
 }
 
-.login input {
-  padding-top: 20px;
-  /*display: flex;*/
-  /*justify-content: space-evenly;*/
-  /*align-items: center;*/
-  /*flex-direction: column;*/
-  /*width: 50em;*/
-
-}
-
-.login label {
+.login {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
+  height: 100vh;
   flex-direction: column;
-  gap: 1rem 1rem;
+  /*box-shadow:  0 .125rem 1rem;*/
+  /*color: #9E4784;*/
+  /*background-color:#1D267D;*/
+  /*width: 80vw;*/
 }
 
 .login h4 {
   display: inline;
-  padding: 5px;
+  /*padding: 5px;*/
 }
 
+.login button {
+  margin: 1rem;
+}
+
+.login-form {
+  padding: 20px;
+  box-shadow:  0 .200rem 1rem;
+  width: 40%;
+  border-radius: 25px;
+  /*color: #9E4784;*/
+}
+
+.form-text {
+  color: inherit;
+}
+
+/*.loginf .form-label {*/
+/*  text-align: left;*/
+/*}*/
+.form-horizontal .form-label{
+    text-align: left;
+}
 /*Image styling*/
 #album-row {
   margin: 20px;

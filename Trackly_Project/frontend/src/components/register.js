@@ -1,11 +1,11 @@
-import { Form, Button } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 // used Boostrap React documentation for form components
 // https://react-bootstrap.netlify.app/docs/forms/overview
-export const SignUp = () => {
+export const Register = () => {
     return (
-        <div className="register">
-             <h4>Sign up</h4>
-            <br />
+        // <div className="login">
+            <Container className="login">
+             <h4>Register</h4>
             <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
@@ -22,15 +22,9 @@ export const SignUp = () => {
                 <Form.Control type="password" placeholder="********" />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicCountry">
-                <Form.Label>Country</Form.Label>
-                {/*    to make to dropddown */}
-                <Form.Control type="text" placeholder="United Kingdom" />
-                </Form.Group>
-
-                 <Button variant="info" type="submit"> Sign up </Button>
+                 <Button variant="info" type="submit" size="lg"> Sign up </Button>
             </Form>
-
-        </div>
+                </Container>
+        // </div>
     )
 }

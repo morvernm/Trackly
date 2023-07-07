@@ -4,12 +4,13 @@ import { Form, Button, Container } from "react-bootstrap";
 export const Login = () => {
     return (
         <div className="login">
-            <Container>
+            <Container className="login">
+                <div className="login-form">
                  <h4>Login</h4>
-            <h4>Register</h4>
                  <br />
                  <br />
-                  <Form>
+                {/*<div className="input-group mb-3">*/}
+                  <Form className="loginf">
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
                 <Form.Control type="email" placeholder="email@email.com" />
@@ -19,11 +20,16 @@ export const Login = () => {
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control type="password" placeholder="********" />
+                    <Form.Text>Forgot your <a href="/">password?</a></Form.Text>
                 </Form.Group>
 
 
-                 <Button variant="primary" type="submit"> Log in</Button>
+                 <Button variant="info" type="submit" size="lg"> Log in</Button>
+                  {/*<br />*/}
+                 <Button variant="outline-light" type="submit" size="lg"> Create an account</Button>
             </Form>
+                    </div>
+                {/*</div>*/}
             </Container>
 
 
