@@ -22,6 +22,8 @@ function App() {
         <Router>
             {/*will be accessible by any page*/}
             <Menu />
+             {/*<Footer />*/}
+
           {/*  the links for the application*/}
           <Routes>
               <Route path="/" element={<Main />} />
@@ -34,7 +36,9 @@ function App() {
               <Route path="/artist" element={<Artist />} />
               <Route path="/album" element={<Album />} />
           </Routes>
+
             {/*<Footer />*/}
+            <Footer />
         </Router>
     </div>
   );

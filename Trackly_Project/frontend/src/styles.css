@@ -22,7 +22,7 @@ body {
 .App {
   text-align: center;
   /*padding: 150px;*/
-  padding: 30px;
+  padding: 90px;
 }
 .App-logo {
   height: 40vmin;
@@ -95,21 +95,19 @@ height: 30px;
   }
 }
 
+/*login and register css*/
+
 .login {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+
   flex-direction: column;
-  /*box-shadow:  0 .125rem 1rem;*/
-  /*color: #9E4784;*/
-  /*background-color:#1D267D;*/
-  /*width: 80vw;*/
 }
 
 .login h4 {
   display: inline;
-  /*padding: 5px;*/
 }
 
 .login button {
@@ -119,7 +117,7 @@ height: 30px;
 .login-form {
   padding: 20px;
   box-shadow:  0 .200rem 1rem;
-  width: 40%;
+  /*width: 50%;*/
   border-radius: 25px;
   /*color: #9E4784;*/
 }
@@ -128,12 +126,15 @@ height: 30px;
   color: inherit;
 }
 
-/*.loginf .form-label {*/
-/*  text-align: left;*/
-/*}*/
-.form-horizontal .form-label{
-    text-align: left;
+.forgot-pass {
+  align-self: center;
 }
+.login-f .form-label {
+  align-self: flex-start;
+}
+
+
+
 /*Image styling*/
 #album-row {
   margin: 20px;
@@ -149,4 +150,16 @@ height: 30px;
 
 #search-form {
   display: inline;
+}
+
+footer {
+  width: 100%;
+  padding: 5px;
+  height: 8vh;
+  /*display: block;*/
+  position: fixed;
+  background-color: white;
+  bottom: 0;
+  left: 0;
+  color: #37306b;
 }
