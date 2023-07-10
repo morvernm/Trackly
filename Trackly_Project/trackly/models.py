@@ -1,5 +1,4 @@
-from datetime import timezone
-
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -28,6 +27,7 @@ class Artist(models.Model):
 class Album(models.Model):
     title = models.CharField(max_length=250)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+
     # tracklist =
     # reviews = models.ManyToManyField('Review', on_delete=models.CASCADE)
 
@@ -37,6 +37,7 @@ class Album(models.Model):
 
 class Song(models.Model):
     title = models.CharField(max_length=250)
+
     # artist = models.
 
     def __str__(self):
@@ -54,21 +55,24 @@ class Review(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'),
     )
+    print(type(options))
+
     title = models.CharField(max_length=250)  # title of review
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')  # author of review
     content = models.TextField()  # review content
     published = models.DateTimeField(default=timezone)  # date and time review was published
-    status = models.CharField(max_length=10, choices=options, default='published')  # status of review
+    status = models.CharField(max_length=10, choices=options)  # status of review
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    objects = models.Manager() # default manager returned in queryset
-    reviewObject = ReviewObjects() # review objects - filtered so only returning published posts
-
+    objects = models.Manager()  # default manager returned in queryset
+    reviewObject = ReviewObjects()  # review objects - filtered so only returning published posts
+    published = models.DateTimeField(default=timezone.now)
     rating_options = [
         ('L', 'Like'),
         ('D', 'Dislike'),
         ('F', 'Favourite'),
     ]
     rating = models.CharField(max_length=12, choices=rating_options, default='L')
+
     # write fields for getting likes, favourites and dislikes
     class Meta:
         ordering = ('-published',)

@@ -12,6 +12,8 @@ import { Menu } from "./components/navbar";
 import { Artist } from "./pages/artist.js";
 import { Album } from"./pages/album.js";
 import { Footer } from "./components/footer";
+// import { ApiExample } from "./pages/apiExample";
+import ApiExample from "./pages/apiExample";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -35,13 +37,14 @@ function App() {
 
               <Route path="/artist" element={<Artist />} />
               <Route path="/album" element={<Album />} />
+              <Route path="/apiexample" element={<ApiExample />} />
           </Routes>
 
             {/*<Footer />*/}
             <Footer />
         </Router>
+
     </div>
   );
 }
-
 export default App;

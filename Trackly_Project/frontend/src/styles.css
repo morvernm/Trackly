@@ -2,15 +2,28 @@
 
 * {
   box-sizing: border-box;
+  /*width: 100%;*/
   /*background-color: #37306B;*/
 }
 
-body {
+html, body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
-  /*background-color: #37306B;*/
-  background-color: #0C134F;
+  width: 100%;
+  padding-top: 50px;
+    overflow-x: hidden;
 
+  /*padding: 0;*/
+  /*background-color: #37306B;*/
+  /*background-color: #0C134F;*/
+
+/*  background: rgb(63,94,251);*/
+/*background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);*/
+
+  /*background: linear-gradient(90deg, #1CB5E0 0%, #000851 100%);*/
+
+  background: rgb(63,173,251);
+background: radial-gradient(circle, rgba(63,173,251,1) 0%, rgba(12,13,79,1) 100%);
   /*color: #D27685;*/
   color: linen;
 }
@@ -22,13 +35,29 @@ body {
 .App {
   text-align: center;
   /*padding: 150px;*/
-  padding: 90px;
+  /*padding: 90px;*/
 }
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+.landing-contain div{
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 
+}
+
+.album-img {
+  border-radius: 50px;
+background: white;
+box-shadow:  20px 20px 0px white,
+             -20px -20px 0px #6dd9dc;
+}
+
+.album-img:hover {
+  /*zoom:1.2;*/
+
+}
 /*typeface*/
 
 
@@ -49,8 +78,9 @@ body {
   /*width: 300px;*/
   /*height: 12%;*/
   /*background-color: #282c34;*/
-  background-color: #9E4784;
+  /*background-color: #9E4784;*/
   gap: 2rem;
+
   padding: 0 2rem;
 }
 
@@ -73,6 +103,10 @@ height: 30px;
 
 .nav a:hover {
   text-decoration: underline;
+}
+
+.ms-auto button {
+  padding: 10px;
 }
 #title:hover {
   text-decoration: none;
@@ -101,8 +135,8 @@ height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-
+  /*height: 100vh;*/
+  height: 500px;
   flex-direction: column;
 }
 
@@ -115,11 +149,11 @@ height: 30px;
 }
 
 .login-form {
-  padding: 20px;
+  padding: 30px;
   box-shadow:  0 .200rem 1rem;
   /*width: 50%;*/
-  border-radius: 25px;
-  /*color: #9E4784;*/
+  border-radius: 50px;
+  /*color: #eeaeca;*/
 }
 
 .form-text {
@@ -154,12 +188,32 @@ height: 30px;
 
 footer {
   width: 100%;
-  padding: 5px;
-  height: 8vh;
+  /*padding: 5px;*/
+  /*height: 10vh;*/
   /*display: block;*/
-  position: fixed;
-  background-color: white;
+  position: absolute;
+  /*background-color: #171f56;*/
+  /*background-color:  #c34d97;*/
+    background-color: #fffafa;
+  /*opacity: 0.7;*/
   bottom: 0;
-  left: 0;
-  color: #37306b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+footer {
+  color: #37306B;
+  /*color: white;*/
+
+}
+
+.foot-cont {
+  position: relative;
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
 }

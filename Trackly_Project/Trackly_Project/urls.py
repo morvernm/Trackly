@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from trackly import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     # maps basic url to index view from our views.py file in trackly
@@ -25,4 +29,6 @@ urlpatterns = [
     path('', include('trackly.urls', namespace='trackly')),
     path('admin/', admin.site.urls),
     path('api/', include('trackly_api.urls', namespace='trackly_api')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

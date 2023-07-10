@@ -134,10 +134,23 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 # White listing the localhost:3000 port
 # for React. from GeeksForGeeks
 # https://www.geeksforgeeks.org/integrating-django-with-reactjs-using-django-rest-framework/
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     'http://localhost:3000',
+#     "http://127.0.0.1:3000",
+# )
 
 REST_FRAMEWORK = {
-#     FOR PERMISSIONS LATER
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+
+    #     change permissions of individual views in trackly_api later
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
+
+CORS_ALLOWED_ORIGINS = [
+    # "http://127.0.0.1:3000",
+    "http://localhost:3000",
+]

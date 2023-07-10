@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Nav } from 'react-bootstrap';
 export const Footer = () => {
         // return <footer bg="light" className="border-top">&copy; {`Morvern Mackintosh`}</footer>;
         return (
             <Container className="foot-cont">
-            <footer className="border-bottom">
-        <Link to="/about">About</Link>
-                    <p className="text-center">&copy; {`Morvern Mackintosh`}</p>
+            <footer className="p-2">
+                {/*<ul>*/}
+                    <Link className="pb-3" to="/about">About</Link>
+                {/*</ul>*/}
+                {/*<Link to="/about">About</Link>*/}
+                    <p className="pt-2">&copy; {`Morvern Mackintosh`}</p>
                      {/*</Container>*/}
             </footer>
             </Container>

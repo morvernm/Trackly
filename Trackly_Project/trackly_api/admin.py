@@ -1,3 +1,1 @@
-from django.contrib import admin
-
-# SignUp your models here.
+from django.contrib.auth.admin import admin
