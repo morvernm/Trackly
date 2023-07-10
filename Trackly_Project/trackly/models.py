@@ -4,16 +4,16 @@ from django.contrib.auth.models import User
 
 
 # custom userProfile model to add extra attributes to existing User model
-# class UserProfile(models.Model):
-#     # links userProfile model to a user model instance
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#
-#     country = models.CharField(max_length=32)
-#     # user's image can be blank
-#     image = models.ImageField(upload_to='profile_images', blank=True)
+class Profile(models.Model):
+    # links userProfile model to a user model instance
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # user's image can be blank
+    image = models.ImageField(upload_to='profile_images', blank=True)
+    bio = models.CharField(max_length=300, blank=True)
 
-# def __str__(self):
-#     return self.user.username
+    def __str__(self):
+        return self.user.username
+
 
 class Artist(models.Model):
     name = models.CharField(max_length=250)

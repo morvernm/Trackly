@@ -139,6 +139,8 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 #     "http://127.0.0.1:3000",
 # )
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
