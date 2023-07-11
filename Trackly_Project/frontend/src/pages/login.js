@@ -1,4 +1,5 @@
 import { Form, Button, Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
 // used Boostrap React documentation for form components
 // https://react-bootstrap.netlify.app/docs/forms/overview
 export const Login = () => {
@@ -23,7 +24,7 @@ export const Login = () => {
                         </Form.Group>
                         <Button variant="info" type="submit" size="lg"> Log in</Button>
                   {/*<br />*/}
-                        <Button variant="outline-light" type="submit" size="lg"> Create an account</Button>
+                        <Link to="/register"><Button variant="outline-light" type="submit" size="lg"> Create an account</Button></Link>
                     </Form>
                 </div>
                 {/*</div>*/}
