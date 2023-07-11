@@ -163,10 +163,9 @@ height: 30px;
 .forgot-pass {
   align-self: center;
 }
-.login-f .form-label {
-  align-self: flex-start;
+.login-f .mb-3{
+  text-align: left;
 }
-
 
 
 /*Image styling*/
@@ -216,4 +215,8 @@ footer {
   width: 100%;
   margin: 0px;
   padding: 0px;
+}
+
+a {
+  color: black;
 }
