@@ -1,5 +1,7 @@
 import { Form, Button, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import axios from "../axios";
+import React, { useState } from "react";
 // used Boostrap React documentation for form components
 // https://react-bootstrap.netlify.app/docs/forms/overview
 export const Login = () => {
@@ -13,7 +15,7 @@ export const Login = () => {
                 {/*<div className="input-group mb-3">*/}
                     <Form className="login-f">
                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
+                            <Form.Label>Username</Form.Label>
                             <Form.Control type="email" placeholder="email@email.com" />
                         </Form.Group>
 

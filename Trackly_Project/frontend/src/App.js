@@ -4,7 +4,7 @@ import'./styles.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Main } from './pages/main';
 import { Login } from './pages/login';
-import { Register } from './components/register';
+import Register from './pages/register';
 import { Inbox } from './pages/inbox.js';
 import { Profile } from './pages/profile.js';
 import { Search } from './pages/search';

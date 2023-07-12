@@ -14,7 +14,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
+        fields = ('username', 'email', 'password')
         # mandatory fields for user registration
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -37,4 +37,19 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 #         fields = ('username', 'password')
 #
 #
-#     def login(self,):
+#     def validate(self,validated_data):
+#         username = validated_data.pop('username', None)
+#         password = validated_data.pop('password', None)
+#
+#         if username and password:
+#             currentUser =
+#
+#         elif not password:
+#             raise serializers.ValidationError({
+#                 'Access denied: Wrong password'
+#             })
+#
+#
+#
+
+# logout

@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const apiBaseURL = "http://127.0.0.1:8000/";
+const baseURL = 'http://127.0.0.1:8000/';
 
 // followed Very Academy Django rest tutorial for code below
-https://www.youtube.com/watch?v=AfYfvjP1hK8&list=PLOLrQ9Pn6caw0PjVwymNc64NkUNbZlhFw&index=4
+// https://www.youtube.com/watch?v=AfYfvjP1hK8&list=PLOLrQ9Pn6caw0PjVwymNc64NkUNbZlhFw&index=4
 
-const axiosInstance = axios.create({
-     apiBaseUrl: this.apiBaseUrl,
+ const axiosInstance = axios.create({
+     baseURL: baseURL,
      timeout: 5000,
      // headers object with authorization property
      headers: {
@@ -19,3 +19,4 @@ const axiosInstance = axios.create({
     },
     }
 );
+ export default axiosInstance;
