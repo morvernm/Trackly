@@ -43,7 +43,7 @@ class CreateUserView(APIView):
                 return Response(status=status.HTTP_201_CREATED)
         return Response(RegisterUserSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#
+
 # class LoginView(APIView):
 #     permission_classes = [AllowAny]
 #     authentication_classes = (TokenAuthentication,)
@@ -57,8 +57,8 @@ class CreateUserView(APIView):
 #             return Response(status=status.HTTP_202_ACCEPTED)
 #
 #         return "An error occurred, did you use the correct password?"
-
-
+#
+#
 
 
 

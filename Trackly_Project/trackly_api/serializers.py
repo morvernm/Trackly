@@ -29,27 +29,4 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 
 # userDelete one?
-
-
-# class LoginSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ('username', 'password')
-#
-#
-#     def validate(self,validated_data):
-#         username = validated_data.pop('username', None)
-#         password = validated_data.pop('password', None)
-#
-#         if username and password:
-#             currentUser =
-#
-#         elif not password:
-#             raise serializers.ValidationError({
-#                 'Access denied: Wrong password'
-#             })
-#
-#
-#
-
 # logout

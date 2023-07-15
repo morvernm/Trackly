@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://127.0.0.1:8000/';
+const baseURL = 'http://127.0.0.1:8000/api/';
 
 // followed Very Academy Django rest tutorial for code below
 // https://www.youtube.com/watch?v=AfYfvjP1hK8&list=PLOLrQ9Pn6caw0PjVwymNc64NkUNbZlhFw&index=4

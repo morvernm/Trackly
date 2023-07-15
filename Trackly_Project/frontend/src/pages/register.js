@@ -33,7 +33,7 @@ export default function Register()  {
 
         // using axios to send from frontend to django backend
         axiosInstance
-            .post(`api/register`, {
+            .post(`register/`, {
                 email: regFormData.email,
                 username: regFormData.username,
                 password: regFormData.password,
