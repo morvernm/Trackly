@@ -19,4 +19,14 @@ const baseURL = 'http://127.0.0.1:8000/api/';
     },
     }
 );
+ // to capture errors if access token expires
+ // axiosInstance.interceptors.response.use(
+ //     (response) => {
+ //         return response;
+ //     },
+ //     async function(error) {
+ //         const
+ //     }
+ //
+ // )
  export default axiosInstance;

@@ -1,11 +1,14 @@
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { Link, useNavigate }  from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axiosInstance from "../axios";
+import AuthContext from "../AuthProvider";
 
 // used Boostrap React documentation for form components
 // https://react-bootstrap.netlify.app/docs/forms/overview
 export default function Login() {
+    const { login, auth } = useContext(AuthContext);
+    // const { setAuth } = useContext(AuthContext);
     const navigate = useNavigate();
     const [status, setStatus] = useState('')
     const [variant, setVariant] = useState('');
@@ -39,12 +42,21 @@ export default function Login() {
             // get users input
             .then((res) => {
                 // store their access and refresh token in local storage
-                localStorage.setItem('access_token', res.data.access);
-                localStorage.setItem('refresh_token', res.data.refresh);
+                localStorage.setItem('access_token', res?.data?.access);
+                localStorage.setItem('refresh_token', res?.data?.refresh);
+                console.log("local storage refresh value is " + localStorage.getItem('refresh_token'));
+                localStorage.setItem('username', loginFormData.username);
+                 console.log("local storage username value is " + localStorage.getItem('username'));
+                 const accessToken = res?.data?.access;
             //     update axiosInstance with users tokens
                 axiosInstance.defaults.headers['Authorization'] =
                     'JWT ' + localStorage.getItem('access_token');
-                navigate("/");
+                // setAuth({accessToken})
+                // console.log(axiosInstance.defaults.headers['Authorization'].type())
+                      login(res?.data?.access);
+                navigate("/profile");
+
+                      console.log("authenticated value is " + auth);
         })
             .catch((error) => {
                 console.log(loginFormData.password);
