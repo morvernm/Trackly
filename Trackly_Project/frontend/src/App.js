@@ -20,6 +20,7 @@ import ApiExample from "./pages/apiExample";
 import PrivateRoute from './utils/PrivateRoute';
 import axiosInstance from "./axios";
 import AuthContext, {AuthProvider} from "./AuthProvider";
+import {SearchProvider} from "./SearchProvider";
 // import {Authentication} from "./auth";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -70,6 +71,7 @@ function App() {
 
   return (
       <AuthProvider>
+          {/*<SearchProvider>*/}
     <div className="App">
         <Router>
             {/*{auth ? <MemberMenu /> : <Menu />}*/}
@@ -104,7 +106,9 @@ function App() {
         </Router>
 
     </div>
+              {/*</SearchProvider>*/}
           </AuthProvider>
+
   );
 }
 export default App;

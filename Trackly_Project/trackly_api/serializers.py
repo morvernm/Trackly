@@ -3,6 +3,8 @@ from rest_framework import serializers
 from trackly.models import Review
 from django.contrib.auth.models import User
 
+# from Trackly_Project.trackly.models import Album
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +29,22 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         return user
         # if password
 
+# class AlbumSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Album
+#         fields = ('name', 'artist, 'tracklist', 'reviews'):
+#
+#     def create(self):
+#         artist = Artist()
 
+# class CreateArtist(serializers.ModelSerializer):
+#     class Meta:
+#         model = CreateArtist
+#         fields('name',)
+# class SpotifySerializer(serializers.ModelSerializer):
+#     # client_id = serializers.CharField()
+#     # client_secret = serializers.CharField()
+#     class Meta:
+#         fields = ('client_id', 'client_secret')
 # userDelete one?
 # logout

@@ -25,6 +25,7 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
+    # albumId = models.AutoField()
     title = models.CharField(max_length=250)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
 

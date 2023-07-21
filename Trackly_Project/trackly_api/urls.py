@@ -3,6 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .views import ReviewList, SingleReview, CreateUserView, BlackListTokenView
 
+
 app_name = 'trackly_api'
 
 urlpatterns = [
