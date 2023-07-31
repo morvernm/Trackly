@@ -6,16 +6,30 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .credentials import *
+from rest_framework.mixins import CreateModelMixin
 # from Trackly_Project.trackly.models import Review
 # from trackly import models
 
-from .serializers import ReviewSerializer, RegisterUserSerializer
-from trackly.models import Review
+from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer
+from trackly.models import Review, Album, Artist
 from requests import Request, post
 import json
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
+# MultipleFieldLookupMixin code is from django rest documentation:
+# https://www.django-rest-framework.org/api-guide/generic-views/
+class MultipleFieldLookupMixin:
+    def get_object(self):
+        queryset = self.get_queryset()             # Get the base queryset
+        queryset = self.filter_queryset(queryset)  # Apply any filter backends
+        filter = {}
+        for field in self.lookup_fields:
+            if self.kwargs.get(field): # Ignore empty fields.
+                filter[field] = self.kwargs[field]
+        obj = get_object_or_404(queryset, **filter)  # Lookup the object
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 # read-write endpoints representing a collection of reviews
 # get or post
@@ -27,10 +41,9 @@ class ReviewList(generics.ListCreateAPIView):
 
 
 # read or delete endpoints for a single review
-# aka get or delete
-# need album id and user id?
+
 class SingleReview(generics.RetrieveDestroyAPIView):
-    queryset = Review.objects.all()  # getting alll reviews - will allow us to delete drafts too?
+    queryset = Review.objects.all()  # getting all reviews
     serializer_class = ReviewSerializer
     pass
 
@@ -48,6 +61,7 @@ class CreateUserView(APIView):
             new_user = serializer.save()
             if new_user is not None:
                 return Response(status=status.HTTP_201_CREATED)
+
         return Response(RegisterUserSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -65,78 +79,26 @@ class BlackListTokenView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# requesting authorisation to then make requests to spotify's api
-# class SpotifyAuth(APIView):
-#     def get(self, request, format=None):
-#             Request('GET', 'https://accounts.spotify.com/authorize', data={
-#             'client_id': CLIENT_ID,
-#             'response_type': 'code',
-#             'redirect_uri': REDIRECT_URI,
-#         })
-# return Response({}, status=status.HTTP_200_OK)
+class CreateAlbumView(generics.CreateAPIView):
+    # permission_classes = ()
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
 
-# requesting spotify access and refresh tokens
-# class SpotifyTokens(APIView):
-#     access_token = ''
-#     refresh_token = ''
-#
-#     def spotify_token(request, format=None):
-#         code = request.GET.get('code')
-#         error = request.GET.get('error')
-#         response = post('https://accounts.spotify.com/api/token', data={
-#             'grant_type': 'authorization_code',
-#             'code': code,
-#             'redirect_uri': REDIRECT_URI,
-#             'client_id': CLIENT_ID,
-#             'client_secret': CLIENT_SECRET,
-#         })
-#         if response.status_code == 200:
-#             access_token = response.get('access_token')
-#             token_type = response.get('token_type')
-#             refresh_token = response.get('refresh_token')
-#             expires_in = response.get('expires_in')
-#             error = response.get('error')
-#             return response.json()
-#         else:
-#             return Response('token generation failure')
-#
-#     def get(self, request, format=None, access_token=None, refresh_token=None):
-#         self.spotify_token()
-#         return Response({'access_token': access_token, 'refresh_token': refresh_token}, status=status.HTTP_200_OK)
+    print(serializer_class)
 
 
-# class SpotifyCredentialsView(APIView):
-#     permission_classes = [AllowAny]
-#
-#     def get(self, request, format=None):
-#         client_id = CLIENT_ID
-#         client_secret = CLIENT_SECRET
-#         url = Request('GET', )
-#         # serializer = SpotifySerializer(data=request.data)
-#         try:
-#             return Response({'client_id': client_id, 'client_secret': client_secret}, status=status.HTTP_200_OK)
-#         except Exception as error:
-#             return Response(status=status.HTTP_404_NOT_FOUND)
-#
-#
-# def refresh_spotify_token():
-#     response = post('https://accounts.spotify.com/api/token', data={
-#         'grant_type': 'refresh_token',
-#         'refresh_token': refresh_token,
-#         'client_id': CLIENT_ID,
-#         'client_secret': CLIENT_SECRET,
-#     }).json()
-#     if response.status_code == 200:
-#         return response.json()
-#     else:
-#         return Response(status.HTTP_400_BAD_REQUEST)
-#
-#     access_token = response.get('access_token')
-#     token_type = response.get('token_type')
-#     expires_in = response.get('expires_in')
-#     refresh_token = response.get('refresh_token')
+class CreateArtistView(generics.CreateAPIView):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
 
-# class UserProfile()
 
-# class AuthURL(APIView):
-#
+class SingleAlbumView(generics.RetrieveUpdateAPIView):
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
+    # lookup_field = ('artist', 'title')
+    lookup_field = 'slug'
+    # pass
+
+
+# class  AlbumTracksView()
+

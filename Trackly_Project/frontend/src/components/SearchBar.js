@@ -14,7 +14,7 @@ export const SearchBar = () => {
         }
     return (
         <InputGroup className="mb-2">
-                          <Form.Control id="search-box" onChange={event => setSearch(event.target.value)} placeholder="Search for an Artist or Album" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
+                          <Form.Control id="search-box" onChange={event => setSearch(event.target.value)} placeholder="Search for an artist" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
                           <Link to="/search"><Button  onClick={handleSearch} type="submit"  id="button-addon2"><BiSearch /></Button></Link>
                         </InputGroup>
     )

@@ -9,6 +9,7 @@ import {useContext} from "react";
 import AuthContext from "../AuthProvider";
 export const Main = () => {
      const { auth } = useContext(AuthContext);
+     console.log("authenticated value is " + auth);
      const landing = () => {
          return (
                  <Container className="landing-contain">
@@ -63,8 +64,9 @@ const dashboard = () => {
             <Row className="landing-row">
                 <Col className="left-col p-5 m-4">
                     <h1>Trackly</h1>
-                    <h4> Discover. Connect. </h4>
+                    {/*<h4> Discover. Connect. </h4>*/}
                     <p>Share your reviews and connect with music lovers</p>
+                    <Link to="/search"><Button variant="light" size="lg">Write a review</Button></Link>
                     {/*<Button type="submit" variant="primary"><Link to="/register">Sign Up</Link></Button>*/}
                 </Col>
                 <Col> <img src={logo} className="App-logo" alt="logo" /> </Col>
@@ -72,8 +74,10 @@ const dashboard = () => {
 
             <Row>
                 <Col>
-                     <h3 className="pt-4">Write a review!</h3>
-                    <br />
+
+             {/*<h3 className="pt-4"></h3>*/}
+
+                    <h3>Your reviews</h3>
                         <br />
                       {albumGrid()}
                 </Col>
@@ -87,7 +91,7 @@ const dashboard = () => {
                  <Row>
                      <Col className="img-col"><img className="album-img" src={album} alt="a music album" /></Col>
                     <Col>
-                        <h3>Your collection</h3>
+                        <h3>Your friends' reviews</h3>
                         {/*<p>Manage your physical music collection</p>*/}
                     </Col>
                 </Row>
@@ -95,7 +99,7 @@ const dashboard = () => {
 
             <Row>
                 <Col>
-                    <h3>Play a random song!</h3>
+                    <h3>Play a random song</h3>
                 </Col>
 
             </Row>
@@ -105,7 +109,8 @@ const dashboard = () => {
     }
     return (
         <Container className="landing-contain">
-            {auth !== undefined ? landing() : dashboard()}
+            {/*{auth !== undefined ? landing() : dashboard()}*/}
+            {auth ? dashboard() : landing()}
         {/*//     <Row className="landing-row">*/}
         {/*//         <Col className="left-col p-5 m-4">*/}
         {/*//             <h1>Trackly</h1>*/}

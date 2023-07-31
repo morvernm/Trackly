@@ -7,8 +7,7 @@ import AuthContext from "../AuthProvider";
 // used Boostrap React documentation for form components
 // https://react-bootstrap.netlify.app/docs/forms/overview
 export default function Login() {
-    const { login, auth } = useContext(AuthContext);
-    // const { setAuth } = useContext(AuthContext);
+    const {login, auth } = useContext(AuthContext);
     const navigate = useNavigate();
     const [status, setStatus] = useState('')
     const [variant, setVariant] = useState('');
@@ -49,20 +48,22 @@ export default function Login() {
                  console.log("local storage username value is " + localStorage.getItem('username'));
                  const accessToken = res?.data?.access;
             //     update axiosInstance with users tokens
+                   login(localStorage.getItem('access_token'));
+                        console.log("authenticated value is " + auth);
                 axiosInstance.defaults.headers['Authorization'] =
                     'JWT ' + localStorage.getItem('access_token');
                 // setAuth({accessToken})
                 // console.log(axiosInstance.defaults.headers['Authorization'].type())
-                      login(res?.data?.access);
+                //       login(localStorage.getItem('access_token'));
+                //         console.log("authenticated value is " + auth);
                 navigate("/profile");
 
-                      console.log("authenticated value is " + auth);
+
         })
             .catch((error) => {
-                console.log(loginFormData.password);
                 console.log("Wrong login details");
                 setVariant("danger");
-                setStatus("Did you enter the correct password?");
+                setStatus("Did you enter the correct username and password?");
         });
     }
 
@@ -73,18 +74,18 @@ export default function Login() {
                     <h4>Login</h4>
                     <br />
                     <br />
-                    <Form className="login-f">
+                    <Form className="login-f" onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicUsername">
                             <Form.Label>Username</Form.Label>
-                            <Form.Control name="username" type="text"  placeholder="Username" onChange={handleChange}/>
+                            <Form.Control name="username" type="text"  placeholder="Username" required onChange={handleChange}/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                              <Form.Label>Password</Form.Label>
-                             <Form.Control name="password" type="password" placeholder="********" onChange={handleChange}/>
+                             <Form.Control name="password" type="password" placeholder="********" required onChange={handleChange}/>
                             <Form.Text classname="forgot-pass">Forgot your <a href="/">password?</a></Form.Text>
                         </Form.Group>
-                        <Button variant="info" type="submit" size="lg" onClick={handleSubmit}> Log in</Button>
+                        <Button variant="info" type="submit" size="lg"> Log in</Button>
                          <Alert variant={variant}>{status}</Alert>
                   {/*<br />*/}
                         <Link to="/register"><Button variant="outline-light" type="submit" size="lg"> Create an account</Button></Link>

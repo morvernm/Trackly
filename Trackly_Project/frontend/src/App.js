@@ -19,7 +19,7 @@ import { Footer } from "./components/footer";
 import ApiExample from "./pages/apiExample";
 import PrivateRoute from './utils/PrivateRoute';
 import axiosInstance from "./axios";
-import AuthContext, {AuthProvider} from "./AuthProvider";
+import AuthContext from "./AuthProvider";
 import {SearchProvider} from "./SearchProvider";
 // import {Authentication} from "./auth";
 // import 'bootstrap/dist/css/bootstrap.min.css';
@@ -31,7 +31,7 @@ import {SearchProvider} from "./SearchProvider";
 //         setAuthenticated(true);
 // };
 function App() {
-    // const {auth } = useContext(AuthContext);
+    const {auth } = useContext(AuthContext);
   //   console.log("access_token is of type " + typeof localStorage.getItem('access_token'));
   //   const[authenticated, setAuthenticated] = useState(false);
   //
@@ -47,44 +47,13 @@ function App() {
 //     })
 // }
 
-    // const [au setAuthenticated] = useState(false);
-      // console.log(typeof axiosInstance.defaults.headers['Authorization']);
-      //   console.log(axiosInstance.defaults.headers['Authorization']);
-    // const isAuthenticated = () => {
-    //     // const [authenticated, setAuthenticated] = useState('False');
-    //     if(axiosInstance.defaults.headers['Authorization'] != null) {
-    //          console.log(axiosInstance.defaults.headers['Authorization']);
-    //         return true;
-    //     }else {
-    //         return false;
-    //     }
-    // // };
-    // if(AuthContext.data != null) {
-    //     setAuthenticated(true);
-    // }else {
-    //     setAuthenticated(false)
-    // }
-    //     let menu = MemberMenu;
-    // }else {
-    //     menu = Menu;
-    // }
-
+  console.log("authenticated value is " + auth);
   return (
-      <AuthProvider>
-          {/*<SearchProvider>*/}
+      // <AuthProvider>
+          /*<SearchProvider>*/
     <div className="App">
         <Router>
-            {/*{auth ? <MemberMenu /> : <Menu />}*/}
-            {/*<Authentication>*/}
             <MemberMenu />
-            {/*will be accessible by any page*/}
-            {/*   {console.log("access token is of value " + localStorage.getItem('access_token'))};*/}
-            {/*      /!*{console.log("username is of value " + localStorage.getItem('username').valueOf())};*!/*/}
-            {/*{console.log("Authenticated is of value " + authenticated.valueOf())};*/}
-            {/*{authenticated ? <MemberMenu /> : <Menu />}*/}
-            {/*<Menu />*/}
-             {/*<Footer />*/}
-
           {/*  the links for the application*/}
           <Routes>
               <Route path="/" element={<Main />} />
@@ -96,18 +65,16 @@ function App() {
               <Route path="/logout" element={<Logout />} />
 
               <Route path="/artist" element={<Artist />} />
-              <Route path="/album" element={<Album />} />
+              <Route path="/album/:albumName" element={<Album />} />
               <Route path="/apiexample" element={<ApiExample />} />
           </Routes>
 
-            {/*<Footer />*/}
             <Footer />
-            {/*</Authentication>*/}
         </Router>
 
     </div>
-              {/*</SearchProvider>*/}
-          </AuthProvider>
+              /*</SearchProvider>*/
+          /*</AuthProvider>*/
 
   );
 }

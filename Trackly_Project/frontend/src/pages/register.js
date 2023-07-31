@@ -28,6 +28,8 @@ export default function Register()  {
     };
 
     const handleSubmit = (e) => {
+        // let password =
+        // if()
         console.log(regFormData);
         e.preventDefault();
 
@@ -45,9 +47,16 @@ export default function Register()  {
             setStatus("Account created!");
         })
             .catch((error) => {
-                console.log("Email or username already registered");
-                setVariant("danger");
-                setStatus("Email or username already registered");
+                if(regFormData.password.length < 8) {
+                    console.log("password too short");
+                    setVariant("danger");
+                    setStatus("Your password must be at least 8 characters long");
+                } else {
+                    console.log("Email or username already registered");
+                    setVariant("danger");
+                    setStatus("Your email or username may already be registered");
+                }
+
                // render(
                //     set()
                //
@@ -63,7 +72,7 @@ export default function Register()  {
                     <br />
                     <br />
                 {/*<div className="input-group mb-3">*/}
-                    <Form className="login-f">
+                    <Form className="login-f" onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
                             <Form.Control name="email" type="email" placeholder="email@email.com" required  onChange={handleChange}/>
@@ -72,17 +81,21 @@ export default function Register()  {
                          <Form.Group className="mb-3" controlId="formBasicUsername">
                              <Form.Label>Username</Form.Label>
                              <Form.Control name="username" type="text" placeholder="Username" required onChange={handleChange}/>
-                        </Form.Group>
+                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                              <Form.Label>Password</Form.Label>
-                             <Form.Control name="password" type="password" placeholder="********"  onChange={handleChange}/>
+                             <Form.Control name="password" type="password" placeholder="********"  required onChange={handleChange}/>
+                        </Form.Group>
+                             <Form.Group className="mb-3" controlId="formBasicPassword">
+                             <Form.Label>Confirm Password</Form.Label>
+                             <Form.Control name="confirm-password" type="password" placeholder="********"  required onChange={handleChange}/>
                         </Form.Group>
                         {/*<p class="primary" id="status">{status}</p>*/}
                         <Alert variant={variant}>{status}</Alert>
-                        <Button variant="info" type="submit" size="lg" onClick={handleSubmit}> Sign up </Button>
+                        <Button variant="info" type="submit" size="lg"> Sign up </Button>
                   {/*<br />*/}
-                       <Link to="/login"><Button variant="outline-light" type="submit" size="lg"> Login </Button></Link>
+                       <Link to="/login"><Button variant="outline-light" size="lg"> Login </Button></Link>
                     </Form>
                 </div>
                 {/*</div>*/}

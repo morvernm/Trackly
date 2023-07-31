@@ -18,6 +18,7 @@ export const AuthProvider = ({children}) => {
        setUser(accessToken);
        console.log("access token is " + accessToken);
        console.log("user value is " + user);
+         console.log("authenticated value is " + auth);
     }
 
     const logout = (accessToken) => {
@@ -25,6 +26,7 @@ export const AuthProvider = ({children}) => {
         setAuth(false);
         setUser(null);
         console.log("user value is " + user);
+          console.log("authenticated value is " + auth);
     }
 
    const contextData = {
