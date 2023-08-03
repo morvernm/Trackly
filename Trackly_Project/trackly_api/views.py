@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from rest_framework import generics, status
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,13 +9,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.mixins import CreateModelMixin
 # from Trackly_Project.trackly.models import Review
 # from trackly import models
+# from credentials import CLIENT_ID, CLIENT_SECRET
 
-from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer
-from trackly.models import Review, Album, Artist
+from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer, SongSerializer, \
+    UserProfileSerializer, UserSerializer
+from trackly.models import Review, Album, Artist, Song, Profile, User
 from requests import Request, post
 import json
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+
 
 # MultipleFieldLookupMixin code is from django rest documentation:
 # https://www.django-rest-framework.org/api-guide/generic-views/
@@ -32,7 +35,6 @@ class MultipleFieldLookupMixin:
         return obj
 
 # read-write endpoints representing a collection of reviews
-# get or post
 class ReviewList(generics.ListCreateAPIView):
     # specifying what data we want from Review models
     queryset = Review.reviewObject.all()  # getting all published reviews
@@ -46,6 +48,21 @@ class SingleReview(generics.RetrieveDestroyAPIView):
     queryset = Review.objects.all()  # getting all reviews
     serializer_class = ReviewSerializer
     pass
+
+class CreateReview(generics.CreateAPIView):
+    # permission_classes = [IsAuthenticated]
+    serializer_class = ReviewSerializer
+    pass
+
+
+class RetrieveUsersReviews(generics.ListCreateAPIView):
+    # queryset = Review.objects.filter(author.pk)
+    serializer_class = ReviewSerializer
+    def get_queryset(self):
+        user_pk = self.kwargs['author_id']
+
+        return Review.objects.filter(author_id=user_pk)
+
 
 
 # endpoint to create new users
@@ -100,5 +117,34 @@ class SingleAlbumView(generics.RetrieveUpdateAPIView):
     # pass
 
 
-# class  AlbumTracksView()
+# class AlbumTracksView(generics.ListAPIView):
+#     serializer_class = Album
 
+
+class CreateSongView(generics.CreateAPIView):
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+
+
+class TrackListView(generics.ListAPIView):
+    serializer_class = SongSerializer
+    def get(self, request, album_id, serializer_class=serializer_class):
+        album = Album.objects.get(pk=album_id)
+        if album:
+            tracks = Song.objects.filter(album=album)
+            # serializer_class = SongSerializer
+            return Response(tracks, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Album not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    # lookup_field = User.username
+
+
+class UserView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'username'

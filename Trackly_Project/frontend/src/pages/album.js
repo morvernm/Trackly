@@ -1,32 +1,74 @@
 import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image} from "react-bootstrap";
 import albumImage from "../album-placeholder.png"
 import ReactPlayer from 'react-player'
-import {Link, useParams} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import{BiStar, BiDislike, BiSolidStar, BiSolidDislike, BiPlayCircle, BiHeart, BiSolidHeart} from "react-icons/bi";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
 import axios from "axios";
+import AuthContext from "../AuthProvider";
 
 export const Album = () => {
     const { albumName } = useParams();
+    const {auth, userId} = useContext(AuthContext);
     const [album, setAlbum] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        if(auth) {
+            setShow(true);
+        }else {
+            navigate("/login");
+        }
+
+    }
 
     const [favourite, setFavourite] = useState(false);
     const [dislike, setDislike] = useState(false);
-    // const [albumId, set]
 
+    const initialData = Object.freeze( {
+        title: '',
+        album: '',
+        author: userId,
+        content: '',
+        rating: '',
+        status: 'draft'
+        }
+
+    )
+    const [reviewContent, setReviewContent] = useState(initialData);
+
+    const navigate = useNavigate();
+
+    if(auth) {
+
+    }
+
+  const handleChange = (e) => {
+        setReviewContent({
+            ...reviewContent,
+            // trimming data as it has spaces
+            [e.target.name]: e.target.value.trim(),
+        });
+        console.log(reviewContent);
+    };
 
     // useEffect(() => {
-        const getAlbum = async () => {
+            async function getAlbum() {
+
+    //     const getAlbum = async () => {
             try {
                            // setAlbumName();
                            //   console.log(albumName);
-                 const res = await axios.get(`http://127.0.0.1:8000/api/album/${albumName}`);
-                 setAlbum(res.data);
+                 await axios.get(`http://127.0.0.1:8000/api/album/${albumName}`)
+                 .then((res) => {
+                     console.log("album id is " + res.data.id);
+                     setReviewContent({...reviewContent, album: res.data.id});
+                     setAlbum(res.data);
+
+                 })
+                 // setAlbum(res.data);
             } catch(error) {
                 return (
                     <div>Error loading album!</div>
@@ -36,10 +78,19 @@ export const Album = () => {
         }
     // });
 
+    // getAlbum();
+  //  useEffect(() => {
+  //   getAlbum().then(r =>  console.log("fetched album"));
+  // }, []);
+ useEffect(() => {
     getAlbum();
+  }, [albumName]);
+
     if(!album) {
         return (<div>Loading album information</div>)
     }
+
+
     function addFavourite() {
         if(favourite) {
                     console.log("unfavourited");
@@ -60,10 +111,31 @@ export const Album = () => {
         console.log(dislike);
     }
 
-    function publish() {
-        console.log("publishing review");
+    async function publish() {
+        if(auth)  {
+            // setReviewContent({...reviewContent, status: 'published'});
+            console.log("publishing review");
+            await axios.post('http://127.0.0.1:8000/api/review/create/', {
+                title: reviewContent.title,
+                album: reviewContent.album,
+                author: reviewContent.author,
+                content: reviewContent.content,
+                rating: reviewContent.rating,
+                status: "published"
+        }).catch(Exception => {
+                return(
+                    <div><p>Sorry we couldn't post your review. Please try again later</p></div>
+                );
+            })
 
-    }
+        }else {
+            navigate('/login');
+        }
+
+        }
+
+
+    // }
 
     function draft() {
 
@@ -96,7 +168,7 @@ export const Album = () => {
                        <Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
                 </Col>
                 <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
-        <Modal.Header closeButton><Modal.Title>Draft your review</Modal.Title></Modal.Header>
+        <Modal.Header style={{color: 'black'}} closeButton><Modal.Title>Draft your review</Modal.Title></Modal.Header>
         <Modal.Body>
                  <Form id="review-form">
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -105,19 +177,29 @@ export const Album = () => {
                 type="text"
                 placeholder="Title of your review"
                 autoFocus
+                name="title"
+                required
+                onChange={handleChange}
               />
             </Form.Group>
             <Form.Group
               className="mb-3"
               controlId="review-content">
               <Form.Label>Your review:</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control as="textarea" rows={3} name="content" required
+                onChange={handleChange}/>
             </Form.Group>
                      <Form.Group
               className="mb-3"
-              controlId="rating">
-              <Form.Label>Rating </Form.Label><Rating />
+              controlId="rating" required
+                >
+              <Form.Label>Rating </Form.Label>
+                         <Rating name="rating" onChange={handleChange}></Rating>
             </Form.Group>
+          {/*                     <Button variant="secondary" onClick={draft}>*/}
+          {/*  Save as draft*/}
+          {/*</Button>*/}
+          {/*                  <Button variant="primary" type="submit">Publish</Button>*/}
           </Form>
         </Modal.Body>
         <Modal.Footer>

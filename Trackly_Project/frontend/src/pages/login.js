@@ -42,13 +42,15 @@ export default function Login() {
             .then((res) => {
                 // store their access and refresh token in local storage
                 localStorage.setItem('access_token', res?.data?.access);
+                console.log("local storage access token is " + localStorage.getItem('access_token'));
                 localStorage.setItem('refresh_token', res?.data?.refresh);
                 console.log("local storage refresh value is " + localStorage.getItem('refresh_token'));
                 localStorage.setItem('username', loginFormData.username);
                  console.log("local storage username value is " + localStorage.getItem('username'));
                  const accessToken = res?.data?.access;
             //     update axiosInstance with users tokens
-                   login(localStorage.getItem('access_token'));
+            //        login(localStorage.getItem('access_token'));
+                        login(localStorage.getItem('username'));
                         console.log("authenticated value is " + auth);
                 axiosInstance.defaults.headers['Authorization'] =
                     'JWT ' + localStorage.getItem('access_token');

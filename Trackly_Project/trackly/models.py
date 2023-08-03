@@ -65,14 +65,21 @@ class Album(models.Model):
 
 
 class Song(models.Model):
+    # class TrackObjects(models.Manager):
+    #     def get_queryset(self):
+    #         return super().get_queryset().filter(Album.title)
+
+
     # spotify songID
-    song_id = models.CharField(max_length=250,)
+    spotify_song_id = models.CharField(max_length=250,)
     title = models.CharField(max_length=250,)
     is_playable = models.BooleanField()
     url = models.URLField()
     # number of users who have favourited the song
     favourited_by = models.IntegerField(default=0)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='album_track',)
+    # objects = models.Manager()
+    # trackObject = TrackObjects()
 
     def __str__(self):
         return self.title

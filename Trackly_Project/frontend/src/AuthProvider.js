@@ -1,4 +1,5 @@
 import { createContext, useState } from 'react'
+import axios from "axios";
 
 const AuthContext = createContext(false);
 
@@ -6,26 +7,44 @@ export const AuthProvider = ({children}) => {
 
     const [auth, setAuth] = useState(false);
 
-   const [user, setUser] = useState(null);
+   const [username, setUsername] = useState(null);
+
+   const [userId, setUserId] = useState(null);
     // let [authTokens, setAuthTokens] = useState(null);
 
 
     // let [user, setUser] = useState(null)
     // let [tokens, setTokens] = useState(null)
 
-    const login = (accessToken) => {
+    async function getUserId(username) {
+        await axios.get(`http://127.0.0.1:8000/api/user/${username}`)
+            .then((response) => {
+                setUserId(response.data.id)
+                console.log("the user id is " + response.data.id);
+
+            })
+            .catch((error) => {
+                console.log("could not set user ID");
+            }
+        )
+    }
+
+    const login = (username) => {
        setAuth(true);
-       setUser(accessToken);
-       console.log("access token is " + accessToken);
-       console.log("user value is " + user);
+        setUsername(username);
+        getUserId(username);
+
+       // console.log("access token is " + accessToken);
+       // console.log("user value is " + user);
          console.log("authenticated value is " + auth);
     }
 
-    const logout = (accessToken) => {
-        console.log("access token is " + accessToken);
+    const logout = (username) => {
+        // console.log("access token is " + accessToken);
         setAuth(false);
-        setUser(null);
-        console.log("user value is " + user);
+        setUsername(null)
+        setUserId(null);
+        // console.log("user value is " + user);
           console.log("authenticated value is " + auth);
     }
 
@@ -35,7 +54,8 @@ export const AuthProvider = ({children}) => {
         auth,
         login,
         logout,
-       user,
+       userId,
+       username,
         // login: login,
         // logout: logout,
     }
@@ -46,4 +66,5 @@ export const AuthProvider = ({children}) => {
         </AuthContext.Provider>
     )
 }
+
 export default AuthContext;

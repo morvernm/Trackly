@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../logo.svg";
 import {Navbar, Nav, Container, Form, Button, InputGroup} from "react-bootstrap";
-import {Fragment, useContext, useState} from "react";
+import React, {Fragment, useContext, useState} from "react";
 import { BiSearch } from "react-icons/bi";
 import AuthContext from '../AuthProvider.js';
 import axiosInstance from "../axios";
@@ -42,8 +42,9 @@ export const MemberMenu = () => {
                       {/*    <Link to="/search"><Button  onSubmit={handleSubmit} type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
                       {/*  </InputGroup>*/}
                     <SearchBar />
+                    {/*<Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
                     <Nav.Link as={Link}to="/inbox">Messages</Nav.Link>
-                    <Nav.Link as={Link}to="/profile">Profile </Nav.Link>
+                    <Nav.Link as={Link}to="/profile/">Profile </Nav.Link>
                     <Nav.Link as={Link}to="/logout">Logout</Nav.Link>
                 </Nav>
                   </Navbar.Collapse>

@@ -3,7 +3,7 @@ import {BiSearch} from "react-icons/bi";
 import React, {useState, useEffect} from "react";
 import {SearchBar} from "../components/SearchBar";
 import {CLIENT_ID, CLIENT_SECRET, accessToken, expiry} from "../utils/spotify"
-import {Link, useNavigate} from "react-router-dom";
+import {createSearchParams, Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 
@@ -15,6 +15,7 @@ export const Search = () => {
     const [expiry, setExpiry] = useState([])
     const [isLoaded, setLoaded] = useState(false);
     const [artistName, setArtistName] = useState("");
+    const [tracks, setTracks] = useState();
 
       const [show, setShow] = useState(false);
 
@@ -47,16 +48,23 @@ export const Search = () => {
                 throw new Error("Sorry, we failed to generate Spotify access tokens!");
         })
 }, [])
-
-    async function search() {
-        console.log("Searching for " + searchInput);
-        let searchParams = {
+           let searchParams = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + accessToken
             }
         }
+
+    async function search() {
+        console.log("Searching for " + searchInput);
+        // let searchParams = {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': 'Bearer ' + accessToken
+        //     }
+        // }
         let artistData = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=artist', searchParams)
             .then(response => response.json())
             .then(data =>  {
@@ -92,6 +100,8 @@ export const Search = () => {
                     createAlbums(data.items, artistData[1]);
                 }
             });
+
+
         // if(albums.artists.length > 1) {
         //     createArtist(album.artists[0])
         //
@@ -128,12 +138,45 @@ export const Search = () => {
                 favourited_by: 0,
                 disliked_by: 0,
             });
+
         }));
     } catch (error) {
         console.log("could not add album to database or album already exists")
         console.log(albums);
     }
 }
+
+
+// async function fetchTracks(album) {
+//         try {
+//                let tracks = await fetch('https://api.spotify.com/v1/albums/' + album.id + '??market=GB' + searchParams)
+//                 .then(response => response.json())
+//                 .then(data =>  {
+//                     console.log("songs are" + data);
+//                 setTracks(data.items);
+//                 // if(Object.keys(data.items).length > 0) {
+//                 //     console.log("albums found:" + albumsFound);
+//                 //     createAlbums(data.items, artistData[1]);
+//                 // }
+//             });
+//         }catch (error) {
+//          console.log("could not add songs to database");
+//         }
+// }
+
+// fetchTracks(albums);
+// async function createSongs(tracks) {
+//         await axios.post('http://127.0.0.1:8000/api/song/create', {
+//             spotify_song_id: tracks.
+//             is_playable: album.is_playable
+//             title
+//             url
+//             favourited_by
+//             album: album.id
+//         })
+//
+// }
+// createSongs(albums);
 
     function checkIfAlbumsFound() {
         if(isLoaded && !albumsFound) {
@@ -153,11 +196,11 @@ export const Search = () => {
     }
     console.log(albums);
 
-    function navigateToAlbum(artistName, albumName) {
-        console.log("going to album page");
-        navigate("/album");
-        console.log(artistName + " " + albumName);
-    }
+    // function navigateToAlbum(artistName, albumName) {
+    //     console.log("going to album page");
+    //     navigate("/album");
+    //     console.log(artistName + " " + albumName);
+    // }
 
     return (
         <Container className="search-results">

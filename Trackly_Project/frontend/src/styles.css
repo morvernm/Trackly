@@ -2,8 +2,6 @@
 
 * {
   box-sizing: border-box;
-  /*width: 100%;*/
-  /*background-color: #37306B;*/
 }
 
 html, body {
@@ -13,34 +11,29 @@ html, body {
   padding-top: 50px;
     overflow-x: hidden;
 
-  /*padding: 0;*/
-  /*background-color: #37306B;*/
-  /*background-color: #0C134F;*/
-
-/*  background: rgb(63,94,251);*/
+  background-color: #37306B;
+  /*background-color: #331D2C;*/
 /*background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);*/
 
-  /*background: linear-gradient(90deg, #1CB5E0 0%, #000851 100%);*/
-
-  background: rgb(63,173,251);
-background: radial-gradient(circle, rgba(63,173,251,1) 0%, rgba(12,13,79,1) 100%);
-  /*color: #D27685;*/
-  color: linen;
+/*background: radial-gradient(circle, rgba(63,173,251,1) 0%, rgba(12,13,79,1) 100%);*/
+/*  color: #E9DCC9;*/
+  color: #FFFFFF;
+/*  color: #EFE1D1;*/
+  /*color: black;*/
 }
-
-.form-label {
+.login-form label {
   color: linen;
 }
 
 .App {
   text-align: center;
-  /*padding: 150px;*/
-  /*padding: 90px;*/
 }
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+
 .landing-contain div{
   padding-bottom: 20px;
   margin-bottom: 20px;
@@ -58,6 +51,8 @@ box-shadow:  20px 20px 0px white,
   /*zoom:1.2;*/
 
 }
+
+
 /*typeface*/
 
 
@@ -75,10 +70,6 @@ box-shadow:  20px 20px 0px white,
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  /*width: 300px;*/
-  /*height: 12%;*/
-  /*background-color: #282c34;*/
-  /*background-color: #9E4784;*/
   gap: 2rem;
 
   padding: 0 2rem;
@@ -252,7 +243,7 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /*height: 100vh;*/
   width: 100vw;
 }
 
@@ -289,8 +280,26 @@ a {
   color: black;
 }
 
+
 /*album page*/
 
 .main-card img {
   width: 300px;
+}
+
+/*profile*/
+.profile-card  {
+  padding: 20px;
+}
+
+
+/**review page*/
+.review-container {
+ width: 70%;
+}
+.review-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
