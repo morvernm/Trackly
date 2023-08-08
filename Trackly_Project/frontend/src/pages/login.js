@@ -38,7 +38,6 @@ export default function Login() {
                 username: loginFormData.username,
                 password: loginFormData.password,
         })
-            // get users input
             .then((res) => {
                 // store their access and refresh token in local storage
                 localStorage.setItem('access_token', res?.data?.access);
@@ -48,17 +47,11 @@ export default function Login() {
                 localStorage.setItem('username', loginFormData.username);
                  console.log("local storage username value is " + localStorage.getItem('username'));
                  const accessToken = res?.data?.access;
-            //     update axiosInstance with users tokens
-            //        login(localStorage.getItem('access_token'));
                         login(localStorage.getItem('username'));
                         console.log("authenticated value is " + auth);
                 axiosInstance.defaults.headers['Authorization'] =
                     'JWT ' + localStorage.getItem('access_token');
-                // setAuth({accessToken})
-                // console.log(axiosInstance.defaults.headers['Authorization'].type())
-                //       login(localStorage.getItem('access_token'));
-                //         console.log("authenticated value is " + auth);
-                navigate("/profile");
+                navigate("/");
 
 
         })
@@ -89,7 +82,6 @@ export default function Login() {
                         </Form.Group>
                         <Button variant="info" type="submit" size="lg"> Log in</Button>
                          <Alert variant={variant}>{status}</Alert>
-                  {/*<br />*/}
                         <Link to="/register"><Button variant="outline-light" type="submit" size="lg"> Create an account</Button></Link>
                     </Form>
                 </div>

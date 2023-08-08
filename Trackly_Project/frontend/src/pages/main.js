@@ -1,14 +1,31 @@
 import logo from '../logo.svg'
 import record from '../images/droidrec-svgrepo-com.svg'
 import album from '../album-placeholder.png'
-import { Container, Card, Button, Row, Col, } from "react-bootstrap"
+import {Container, Card, Button, Row, Col, Image,} from "react-bootstrap"
 import { albumGrid } from '../components/albumGrid';
 import {Link} from "react-router-dom";
 // import {Dashboard} from '../pages/dashboard';
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import AuthContext from "../AuthProvider";
+import { getUserReviews } from "../utils/BackendRequests";
+
 export const Main = () => {
-     const { auth } = useContext(AuthContext);
+     const { auth, userId } = useContext(AuthContext);
+     const [reviews, setReviews] = useState("");
+
+    //  useEffect(() => {
+    //           if(auth) {
+    //      getUserReviews(userId)
+    //         .then(data => {
+    //             setReviews(data);
+    //     })
+    //         .catch(error => {
+    //             console.error("could not fetch user's reviews" + error.message);
+    //     });
+    //  }
+    // });
+
+
      console.log("authenticated value is " + auth);
      const landing = () => {
          return (
@@ -38,8 +55,8 @@ export const Main = () => {
                  <Row>
                      <Col className="img-col"><img className="album-img" src={album} alt="a music album" /></Col>
                     <Col>
-                        <h3>Track your collection</h3>
-                        <p>Manage your physical music collection</p>
+                        {/*<h3>Track your collection</h3>*/}
+                        {/*<p>Manage your physical music collection</p>*/}
                     </Col>
                 </Row>
             </div>
@@ -79,8 +96,34 @@ const dashboard = () => {
 
                     <h3>Your reviews</h3>
                         <br />
-                      {albumGrid()}
-                </Col>
+                    {/*{reviews &&*/}
+                    {/*    <Row id="album-row">*/}
+                    {/* <Col className="album-col">*/}
+                    {/*     /!*<h4>Artist name</h4>*!/*/}
+                    {/*    <Image src={reviews[0].album_data.img_url} className="img-thumbnail" alt="Album cover" />*/}
+                    {/* </Col>*/}
+                    {/* <Col className="album-col">*/}
+                    {/*    <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
+                    {/*</Col>*/}
+                    {/*<Col className="album-col">*/}
+                    {/*    <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
+                    {/*</Col>*/}
+                    {/*    </Row>*/}
+                    {/*}*/}
+                      {/*{albumGrid()}*/}
+             {/*<Row id="album-row">*/}
+             {/*        <Col className="album-col">*/}
+             {/*            /!*<h4>Artist name</h4>*!/*/}
+             {/*           <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
+             {/*        </Col>*/}
+             {/*        <Col className="album-col">*/}
+             {/*           <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
+             {/*       </Col>*/}
+             {/*       <Col className="album-col">*/}
+             {/*           <Image src={album} className="img-thumbnail" alt="Album cover" />*/}
+                    </Col>
+             {/*    </Row>*/}
+             {/*   </Col>*/}
                 <Col>
                     <h3>Recommendations</h3>
                 </Col>

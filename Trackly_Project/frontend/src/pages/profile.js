@@ -82,7 +82,7 @@ export const Profile = () => {
                                     <h3>Reviews</h3>
                                     {/*{reviewsLoaded ? }*/}
                                     <Row className=" mx-2 row row-cols-2 p-2"></Row>
-                                    <Reviews />
+                                    {/*<Reviews />*/}
     {/*                                 <CardGroup>*/}
     {/*  <Card>*/}
     {/*    <Card.Img variant="top" src="holder.js/100px160" />*/}

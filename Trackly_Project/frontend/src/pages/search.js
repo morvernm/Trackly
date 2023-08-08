@@ -58,13 +58,6 @@ export const Search = () => {
 
     async function search() {
         console.log("Searching for " + searchInput);
-        // let searchParams = {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer ' + accessToken
-        //     }
-        // }
         let artistData = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=artist', searchParams)
             .then(response => response.json())
             .then(data =>  {
@@ -137,7 +130,18 @@ export const Search = () => {
                 review_count: 0,
                 favourited_by: 0,
                 disliked_by: 0,
-            });
+            }).then((res) => {
+
+                // let backendId = res.data.id;
+                // // setAlbumId(res.id);
+                // setAlbumIds(oldId => ({
+                //     ...oldId,
+                //         [album.id]: backendId
+                // }));
+                // console.log("created album id is " + res.data.id);
+
+            })
+            // };
 
         }));
     } catch (error) {
@@ -196,27 +200,32 @@ export const Search = () => {
     }
     console.log(albums);
 
-    // function navigateToAlbum(artistName, albumName) {
-    //     console.log("going to album page");
-    //     navigate("/album");
-    //     console.log(artistName + " " + albumName);
-    // }
-
     return (
         <Container className="search-results">
+            {/*<Form onSubmit={search}>*/}
             <InputGroup className="mb-2">
                           <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Search for an Artist or Album" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
-                          <Link to="/search"><Button  onClick={search} type="submit"  id="button-addon2"><BiSearch /></Button></Link>
+                          {/*<Link to="/search"><Button  onClick={search} type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
+                     <Link to="/search"><Button  onClick={search} type="submit"  id="button-addon2"><BiSearch /></Button></Link>
                         </InputGroup>
+                {/*</Form>*/}
             {/*4 columns max in 1 row*/}
             <Row className=" mx-2 row row-cols-3 p-2">
                 {/*<p>artist info here?</p>*/}
                 {albums == 0 ? console.log("waiting to perform a search ") : albums.map( (album, i) => {
+                    console.log(album.id);
+                    // const slugName = album.name
+                    //     .toLowerCase()
+                    //     .replace(/[^a-z0-9]+/g, '-')  // Replace non-letters and non-digits with hyphens
+                    //      .replace(/^-+|-+$/g, '');
+                    // console.log("the album id for " + album.name + " is " + albumIds[album.id]);
                     return (
                          <Card className="search-card p-2 mb-sm-8">
                             <Card.Img src={album.images[0].url} variant="top"  />
                              <Card.Body>
-                                <Link to={`/album/${album.name.toLowerCase().replace(/\s+/g, "-")}`}><Card.Title >{album.name} </Card.Title></Link>
+                                {/*<Link to={`/album/${album.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-")}`}><Card.Title >{album.name} </Card.Title></Link>*/}
+                                {/* <Link to={`/album/${albumIds[album.id]}`}><Card.Title >{album.name} </Card.Title></Link>*/}
+                                  <Link to={`/album/${album.id}`}><Card.Title >{album.name} </Card.Title></Link>
                             </Card.Body>
                          </Card>
                     )

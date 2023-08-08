@@ -25,7 +25,7 @@ class Artist(models.Model):
     # will get artistId from spotify api and store it here
     spotify_artist_id = models.CharField(max_length=250, null=True)
     name = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=100, unique=True,  default=uuid.uuid4)
+    slug = models.SlugField(max_length=100, unique=True)
     # albums = models.ForeignKey('Album', on_delete=models.CASCADE, related_nampye='artist_albums', null=True)
 
     def save(self, *args, **kwargs):
@@ -50,6 +50,7 @@ class Album(models.Model):
     favourited_by = models.PositiveIntegerField(default=0, blank=True, null=True)
     disliked_by = models.PositiveIntegerField(default=0, blank=True, null=True)
     slug = models.SlugField(max_length=100, unique=True, default=uuid.uuid4)
+
 
     def save(self, *args, **kwargs):
         if Album.objects.filter(title=self.title).exists():

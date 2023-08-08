@@ -1,4 +1,4 @@
-import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image} from "react-bootstrap";
+import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image, Alert} from "react-bootstrap";
 import albumImage from "../album-placeholder.png"
 import ReactPlayer from 'react-player'
 import {Link, useParams, useNavigate} from "react-router-dom";
@@ -10,10 +10,15 @@ import AuthContext from "../AuthProvider";
 
 export const Album = () => {
     const { albumName } = useParams();
+    // const { albumId } = useParams();
     const {auth, userId} = useContext(AuthContext);
     const [album, setAlbum] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [show, setShow] = useState(false);
+    const [published, setPublished] = useState("");
+    const [variant, setVariant]= useState("");
+    const [reviewShow, setReviewShow] = useState(false);
+    const [invalidRating, setInvalidRating] = useState(true);
     const handleClose = () => setShow(false);
     const handleShow = () => {
         if(auth) {
@@ -38,14 +43,15 @@ export const Album = () => {
 
     )
     const [reviewContent, setReviewContent] = useState(initialData);
-
     const navigate = useNavigate();
 
-    if(auth) {
-
-    }
-
   const handleChange = (e) => {
+        if(e.target.name === "rating") {
+            console.log("checking rating");
+            if(e.target.value > 0) {
+                setInvalidRating(false);
+            }
+        }
         setReviewContent({
             ...reviewContent,
             // trimming data as it has spaces
@@ -54,16 +60,14 @@ export const Album = () => {
         console.log(reviewContent);
     };
 
-    // useEffect(() => {
             async function getAlbum() {
 
     //     const getAlbum = async () => {
             try {
                            // setAlbumName();
-                           //   console.log(albumName);
                  await axios.get(`http://127.0.0.1:8000/api/album/${albumName}`)
                  .then((res) => {
-                     console.log("album id is " + res.data.id);
+                     console.log("backend album id is " + res.data.id);
                      setReviewContent({...reviewContent, album: res.data.id});
                      setAlbum(res.data);
 
@@ -76,14 +80,11 @@ export const Album = () => {
             }
 
         }
-    // });
-
-    // getAlbum();
-  //  useEffect(() => {
-  //   getAlbum().then(r =>  console.log("fetched album"));
-  // }, []);
  useEffect(() => {
-    getAlbum();
+     if(albumName) {
+         getAlbum();
+     }
+
   }, [albumName]);
 
     if(!album) {
@@ -93,7 +94,7 @@ export const Album = () => {
 
     function addFavourite() {
         if(favourite) {
-                    console.log("unfavourited");
+            console.log("unfavourited");
         setFavourite(false);
              console.log(favourite);
 
@@ -101,8 +102,6 @@ export const Album = () => {
             setFavourite(true);
                  console.log(favourite);
         }
-
-
     }
 
     function addDislike() {
@@ -111,7 +110,14 @@ export const Album = () => {
         console.log(dislike);
     }
 
-    async function publish() {
+    async function publish (e) {
+        e.preventDefault();
+         if(invalidRating) {
+                setVariant("danger");
+                setPublished("Please provide a star rating");
+                setReviewShow(true);
+                return console.log("user did not provide a rating");
+            }
         if(auth)  {
             // setReviewContent({...reviewContent, status: 'published'});
             console.log("publishing review");
@@ -122,32 +128,24 @@ export const Album = () => {
                 content: reviewContent.content,
                 rating: reviewContent.rating,
                 status: "published"
-        }).catch(Exception => {
-                return(
-                    <div><p>Sorry we couldn't post your review. Please try again later</p></div>
-                );
-            })
-
+        }).then((res) => {
+                setPublished("Your review has been posted!");
+                setVariant("success");
+                setReviewShow(true);
+            }).catch(error => {
+                    setReviewShow(true);
+                    setPublished(`Sorry we couldn't post your review. Please try again later. Error: ${error.message}`);
+                    setVariant("danger");
+            });
         }else {
             navigate('/login');
         }
-
         }
 
-
-    // }
-
-    function draft() {
-
-        console.log("saving as draft");
-
-    }
     function playSong() {
         console.log("Now playing song");
         setPlaying(true);
     }
-
-
 
     return (
         <Container className="album-page-container">
@@ -155,10 +153,9 @@ export const Album = () => {
             <Row className="album-pg-row">
                 <Col>
                     <Card.Img src={album.img_url} />
-                    {/*<Image src={album.img_url} alt="album-name" fluid/>*/}
                 </Col>
                 <Col>
-                    <h3>{albumName.replace(/-/g, " ")}</h3>
+                    <h3>{album.title}</h3>
                     <h5>{album.artist}</h5>
                 </Col>
                 <Col>
@@ -169,8 +166,9 @@ export const Album = () => {
                 </Col>
                 <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
         <Modal.Header style={{color: 'black'}} closeButton><Modal.Title>Draft your review</Modal.Title></Modal.Header>
-        <Modal.Body>
-                 <Form id="review-form">
+                       <Form id="review-form" onSubmit={publish}>
+                    <Modal.Body>
+
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Title</Form.Label>
               <Form.Control
@@ -191,22 +189,18 @@ export const Album = () => {
             </Form.Group>
                      <Form.Group
               className="mb-3"
-              controlId="rating" required
-                >
-              <Form.Label>Rating </Form.Label>
+              controlId="rating-group">
+                         {/*<Form.Control name="rating" as={Rating} required onChange={handleChange} />*/}
                          <Rating name="rating" onChange={handleChange}></Rating>
             </Form.Group>
-          {/*                     <Button variant="secondary" onClick={draft}>*/}
-          {/*  Save as draft*/}
-          {/*</Button>*/}
-          {/*                  <Button variant="primary" type="submit">Publish</Button>*/}
-          </Form>
+                     <Button variant="primary" type="submit">Publish</Button>
+
         </Modal.Body>
+                       </Form>
         <Modal.Footer>
-          <Button variant="secondary" onClick={draft}>
-            Save as draft
-          </Button>
-          <Button variant="primary" type="submit" onClick={publish}>Publish</Button>
+            <Alert show={reviewShow} variant={variant}>{published}</Alert>
+            <br />
+            <Link to={`/user/${userId}/reviews`}>See your reviews</Link>
         </Modal.Footer>
       </Modal>
             </Row>
@@ -236,14 +230,12 @@ export const Album = () => {
 
                 </div>
                     </Col>
-
                 </Row>
                 <Row>
                        <Col>
-                                   <Link to="">Listen to full song on Spotify</Link>
+                           <Link to="">Listen to full song on Spotify</Link>
                     </Col>
                 </Row>
-
                 </Card>
         </Container>
     )

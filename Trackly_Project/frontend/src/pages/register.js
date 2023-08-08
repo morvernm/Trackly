@@ -10,11 +10,12 @@ export default function Register()  {
     // for updating the user
     const [status, setStatus] = useState('')
     const [variant, setVariant] = useState('');
-    // stops username and password from being changed
+
     const initialData = Object.freeze({
         email: '',
         username: '',
         password: '',
+        confirmPassword: ''
     });
 
     const [regFormData, setRegFormData] = useState(initialData)
@@ -22,23 +23,25 @@ export default function Register()  {
     const handleChange = (e) => {
         setRegFormData({
             ...regFormData,
-            // trimming data as it has spaces
+            // trimming data if it has spaces
             [e.target.name]: e.target.value.trim(),
         });
     };
 
     const handleSubmit = (e) => {
-        // let password =
-        // if()
-        console.log(regFormData);
         e.preventDefault();
+        if(regFormData.password !== regFormData.confirmPassword) {
+            setVariant("danger");
+            setStatus("Please ensure your passwords match");
+            return console.log("passwords don't match");
+        }
 
         // using axios to send from frontend to django backend
         axiosInstance
             .post(`register/`, {
                 email: regFormData.email,
                 username: regFormData.username,
-                password: regFormData.password,
+                password: regFormData.password
         })
             .then((res) => {
             console.log(res);
@@ -47,21 +50,9 @@ export default function Register()  {
             setStatus("Account created!");
         })
             .catch((error) => {
-                if(regFormData.password.length < 8) {
-                    console.log("password too short");
+                    console.log("error");
                     setVariant("danger");
-                    setStatus("Your password must be at least 8 characters long");
-                } else {
-                    console.log("Email or username already registered");
-                    setVariant("danger");
-                    setStatus("Your email or username may already be registered");
-                }
-
-               // render(
-               //     set()
-               //
-               //          // <p>email or username already registered</p>
-               //  );
+                     setStatus("Sorry we encountered an error" + error.message);
         });
     }
     return (
@@ -71,7 +62,6 @@ export default function Register()  {
                     <h4>Register</h4>
                     <br />
                     <br />
-                {/*<div className="input-group mb-3">*/}
                     <Form className="login-f" onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
@@ -87,21 +77,16 @@ export default function Register()  {
                              <Form.Label>Password</Form.Label>
                              <Form.Control name="password" type="password" placeholder="********"  required onChange={handleChange}/>
                         </Form.Group>
-                             <Form.Group className="mb-3" controlId="formBasicPassword">
+                             <Form.Group className="mb-3" controlId="formConfirmPassword">
                              <Form.Label>Confirm Password</Form.Label>
-                             <Form.Control name="confirm-password" type="password" placeholder="********"  required onChange={handleChange}/>
+                             <Form.Control name="confirmPassword" type="password" placeholder="********"  required onChange={handleChange}/>
                         </Form.Group>
-                        {/*<p class="primary" id="status">{status}</p>*/}
                         <Alert variant={variant}>{status}</Alert>
                         <Button variant="info" type="submit" size="lg"> Sign up </Button>
-                  {/*<br />*/}
                        <Link to="/login"><Button variant="outline-light" size="lg"> Login </Button></Link>
                     </Form>
                 </div>
-                {/*</div>*/}
             </Container>
-
-
         </div>
     )
 }

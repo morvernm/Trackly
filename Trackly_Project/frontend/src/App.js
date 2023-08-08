@@ -29,7 +29,7 @@ function App() {
   console.log("authenticated value is " + auth);
   return (
       // <AuthProvider>
-          /*<SearchProvider>*/
+      // <SearchProvider>
     <div className="App">
         <Router>
             <MemberMenu />
@@ -52,7 +52,7 @@ function App() {
         </Router>
 
     </div>
-              /*</SearchProvider>*/
+              // </SearchProvider>
           /*</AuthProvider>*/
 
   );

@@ -1,21 +1,20 @@
 from django.contrib.admin.utils import lookup_field
-from rest_framework import serializers
+from django.http import HttpResponse
+from rest_framework import serializers, status
 # from Trackly_Project.trackly.models import Review
-from trackly.models import Review, Album, Artist, Song, Profile
+from trackly.models import Review, Album, Artist, Song, Profile, Favourite, Comment
 from django.contrib.auth.models import User
+from rest_framework.response import Response
 
 
-# from Trackly_Project.trackly.models import Album
+# this file supports the serialization and deserialization of model data from
+# the Backend to the React front end and vice versa
 
-
-
-
-# user registration serializer
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
-        # mandatory fields for user registration
+
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_password(self, value):
@@ -23,16 +22,18 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Your password must be at least 8 characters long.")
         return value
 
+    def validate_username(self, value):
+        if User.objects.filter(username=value):
+            raise serializers.ValidationError("Username already registered")
+        return value
+
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         user = User(**validated_data)
-        # if password is not None and len(password) >= 8:
-        user.set_password(password)
-        # if len(password) >= 8:
-        #     user.set_password(password)
+        if password is not None:
+            user.set_password(password)
         user.save()
         return user
-        # if password
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -79,10 +80,13 @@ class AlbumSerializer(serializers.ModelSerializer):
 
         return album_exists
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     album_data = AlbumSerializer(source='album', read_only=True)
+
     class Meta:
-        fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status', 'album_data')  # specifying the data we want to use
+        fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status',
+                  'album_data')  # specifying the data we want to use
         model = Review  # the model we're using
 
     def create(self, validated_data):
@@ -96,8 +100,21 @@ class ReviewSerializer(serializers.ModelSerializer):
         # primary_key = user.pk
         # validated_data['author'] = user.pk
         # validated_data['album'] = album
-        new_review = Review.objects.create(**validated_data)
-        return new_review
+
+        review_exists = Review.objects.filter(album=validated_data.get('album'), author=validated_data.get('author'))
+
+        if review_exists:
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        # review_exists.DoesNotExist:
+        if not review_exists:
+            new_review = Review.objects.create(**validated_data)
+            return new_review
+
+        # if not review_exists:
+        #
+        # else:
+        #     return
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -156,3 +173,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username')
 
 
+class FavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = ('user', 'favourite_songs', 'favourite_albums')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'content', 'user', 'review', 'written')

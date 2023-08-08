@@ -30,5 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('trackly_api.urls', namespace='trackly_api')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/register/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
