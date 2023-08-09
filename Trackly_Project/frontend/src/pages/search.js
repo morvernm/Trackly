@@ -16,6 +16,8 @@ export const Search = () => {
     const [isLoaded, setLoaded] = useState(false);
     const [artistName, setArtistName] = useState("");
     const [tracks, setTracks] = useState();
+    const [errorMessage, setErrorMessage] = useState("");
+    const [errorShow, setErrorShow] = useState(false);
 
       const [show, setShow] = useState(false);
 
@@ -66,7 +68,14 @@ export const Search = () => {
                 return [data.artists.items[0].id, data.artists.items[0].name];
             })
             .catch(Exception => {
-                throw new Error("Sorry, there is a problem with our connection to Spotify search");
+                // if(searchInput === "") {
+                //     console.log("waiting to perform a search")
+                // }
+                    setErrorShow(true);
+                    setErrorMessage("Sorry we encountered a problem, please try again later");
+                    // throw new Error("Sorry, there is a problem with our connection to Spotify search");
+                // }
+
             })
         async function createArtist(artistData) {
             await axios.post('http://127.0.0.1:8000/api/artist/create/', {
@@ -114,12 +123,6 @@ export const Search = () => {
     async function createAlbums(albums, artist) {
     try {
         await Promise.all(albums.map(async (album) => {
-            // let artists;
-            // if(album.artists.length > 0) {
-            //     artists = album.artists[0], album.artists[1];
-            // }else {
-            //     artists = album.artists[0];
-            // }
             await axios.post('http://127.0.0.1:8000/api/album/create/', {
                 spotify_album_id: album.id,
                 title: album.name,
@@ -131,14 +134,6 @@ export const Search = () => {
                 favourited_by: 0,
                 disliked_by: 0,
             }).then((res) => {
-
-                // let backendId = res.data.id;
-                // // setAlbumId(res.id);
-                // setAlbumIds(oldId => ({
-                //     ...oldId,
-                //         [album.id]: backendId
-                // }));
-                // console.log("created album id is " + res.data.id);
 
             })
             // };
@@ -202,29 +197,23 @@ export const Search = () => {
 
     return (
         <Container className="search-results">
-            {/*<Form onSubmit={search}>*/}
-            <InputGroup className="mb-2">
-                          <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Search for an Artist or Album" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
+            <Form onSubmit={search}>
+                <h1>Search for an artist</h1>
+            <InputGroup className="mb-2" required>
+                          <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Artist name" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
                           {/*<Link to="/search"><Button  onClick={search} type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
-                     <Link to="/search"><Button  onClick={search} type="submit"  id="button-addon2"><BiSearch /></Button></Link>
+                     <Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>
                         </InputGroup>
-                {/*</Form>*/}
+                </Form>
             {/*4 columns max in 1 row*/}
             <Row className=" mx-2 row row-cols-3 p-2">
                 {/*<p>artist info here?</p>*/}
                 {albums == 0 ? console.log("waiting to perform a search ") : albums.map( (album, i) => {
                     console.log(album.id);
-                    // const slugName = album.name
-                    //     .toLowerCase()
-                    //     .replace(/[^a-z0-9]+/g, '-')  // Replace non-letters and non-digits with hyphens
-                    //      .replace(/^-+|-+$/g, '');
-                    // console.log("the album id for " + album.name + " is " + albumIds[album.id]);
                     return (
                          <Card className="search-card p-2 mb-sm-8">
                             <Card.Img src={album.images[0].url} variant="top"  />
                              <Card.Body>
-                                {/*<Link to={`/album/${album.name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "-")}`}><Card.Title >{album.name} </Card.Title></Link>*/}
-                                {/* <Link to={`/album/${albumIds[album.id]}`}><Card.Title >{album.name} </Card.Title></Link>*/}
                                   <Link to={`/album/${album.id}`}><Card.Title >{album.name} </Card.Title></Link>
                             </Card.Body>
                          </Card>
@@ -235,7 +224,8 @@ export const Search = () => {
 
             </Row>
             <div className="searchMessage">
-                <Alert variant="light"><h4 className="m-2">{checkIfAlbumsFound()}</h4></Alert>
+                {/*<Alert variant="light"><h4 className="m-2">{checkIfAlbumsFound()}</h4></Alert>*/}
+                <Alert show={errorShow} variant="light"><h4>{errorMessage}</h4></Alert>
             </div>
         </Container>
 

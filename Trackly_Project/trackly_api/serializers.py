@@ -35,6 +35,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username')
+
 
 class AlbumSerializer(serializers.ModelSerializer):
     artist = serializers.SlugRelatedField(
@@ -83,10 +88,11 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     album_data = AlbumSerializer(source='album', read_only=True)
+    user_data = UserSerializer(source='author', read_only=True)
 
     class Meta:
         fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status',
-                  'album_data')  # specifying the data we want to use
+                  'album_data', 'user_data')  # specifying the data we want to use
         model = Review  # the model we're using
 
     def create(self, validated_data):
@@ -108,6 +114,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         # review_exists.DoesNotExist:
         if not review_exists:
+            album = validated_data.get('album')
             new_review = Review.objects.create(**validated_data)
             return new_review
 
@@ -167,16 +174,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'image', 'bio')
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username')
+
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourite
-        fields = ('user', 'favourite_songs', 'favourite_albums')
+        fields = ('user', 'favourite_albums')
 
 
 class CommentSerializer(serializers.ModelSerializer):

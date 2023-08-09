@@ -36,6 +36,7 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
+    # for retrieving a random album
     # from spotifyAPI
     spotify_album_id = models.CharField(max_length=250, unique=True)
     title = models.CharField(max_length=250)
@@ -125,11 +126,11 @@ class Review(models.Model):
 
 class Favourite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    favourite_songs = models.ManyToManyField(Song)
-    favorite_albums = models.ManyToManyField(Album)
+    # favourite_songs = models.ManyToManyField(Song)
+    favourite_albums = models.ManyToManyField(Album)
 
     def __str__(self):
-        return {self.favourite_songs, self.favorite_albums}
+        return {self.favourite_songs, self.favourite_albums}
 
 
 class UserFollowing(models.Model):

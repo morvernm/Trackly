@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from rest_framework import generics, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -13,9 +14,9 @@ from rest_framework.mixins import CreateModelMixin
 # from credentials import CLIENT_ID, CLIENT_SECRET
 
 from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer, SongSerializer, \
-    UserProfileSerializer, UserSerializer, CommentSerializer
+    UserProfileSerializer, UserSerializer, CommentSerializer, FavouriteSerializer
 
-from trackly.models import Review, Album, Artist, Song, Profile, User, Comment
+from trackly.models import Review, Album, Artist, Song, Profile, User, Comment, Favourite
 import json
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -42,9 +43,13 @@ class MultipleFieldLookupMixin:
 # read-write endpoints representing a collection of reviews
 class ReviewList(generics.ListCreateAPIView):
     # specifying what data we want from Review models
-    queryset = Review.reviewObject.all()  # getting all published reviews
+    # queryset = Review.reviewObject.all()  # getting all published reviews
     serializer_class = ReviewSerializer
-    pass
+    # pass
+    def get_queryset(self):
+        album_pk = self.kwargs['album_pk']  # Assuming 'album_pk' is the name of the URL parameter
+        queryset = Review.objects.filter(album_id=album_pk)
+        return queryset
 
 
 # read or delete endpoints for a single review
@@ -143,19 +148,24 @@ class TrackListView(generics.ListAPIView):
             return Response({'detail': 'Album not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class RandomAlbum(APIView):
-    # def get_random_album(self):
-        # return random.randrange(1, Album.objects.all.count())
+class RandomAlbums(generics.ListAPIView):
+    serializer_class = AlbumSerializer
+    queryset = Album.objects.all()
 
-    #  overriding get_queryset to return different random albums on each query
     def get(self, request):
-        total_albums = Album.objects.count()
-        random_album_id = random.randint(1, total_albums)
-        random_album = get_object_or_404(Album, id=random_album_id)
-        print("Random album ID:", random_album_id)
-        # random_album = Album.objects.all().filter(id=self.get_random_album())
-        serializer_class = AlbumSerializer(random_album)
-        return Response(serializer_class.data)
+        try:
+            first_album = Album.objects.order_by("id").first()
+            last_album = Album.objects.order_by("id").last()
+            # random_album_id = random.randint(first_album.pk, last_album.pk)
+            random_album_ids = [random.randint(first_album.pk, last_album.pk) for _ in range(6)]
+            # try:
+            #     random_album = Album.objects.all().filter(pk=random_album_id).first()
+            random_albums = Album.objects.filter(pk__in=random_album_ids)
+            # queryset = random_album
+            serializer = self.serializer_class(random_albums, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({"message": "Random album not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # user views
@@ -175,4 +185,19 @@ class UserView(generics.RetrieveAPIView):
 class CommentList(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    pass
+
+
+class WriteComment(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    pass
+
+
+class CreateFavourite(generics.CreateAPIView):
+    serializer_class = FavouriteSerializer
+    pass
+
+class FavouriteList(generics.ListCreateAPIView):
+    queryset = Favourite.objects.all()
+    serializer_class = FavouriteSerializer
     pass

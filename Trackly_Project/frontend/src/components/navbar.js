@@ -8,18 +8,13 @@ import axiosInstance from "../axios";
 import {SearchBar} from "../components/SearchBar";
 
 export const MemberMenu = () => {
-    const { auth } = useContext(AuthContext);
+    const { auth, userId } = useContext(AuthContext);
     const [searchInput, setSearch] = useState('');
 
     const handleKeyEvent = (e) => {
         // if(e.code === 'Enter')
     }
 
-    const handleSubmit = (e) => {
-        // return(
-        //
-        // )
-    }
         const [expanded, setExpanded] = useState(false);
     const navAuthenticated = () => {
         return (
@@ -28,7 +23,8 @@ export const MemberMenu = () => {
                   {/*// Used React Bootstrap documentation for Navbar.Brand code*/}
                     <Navbar.Brand as={Link}to="/">
                      <img id ="nav-logo" alt="Trackly Logo" src={logo} className="d-inline-block align-top"/>{' '}Trackly
-                     </Navbar.Brand>
+                    </Navbar.Brand>
+
                   {/*<InputGroup className="mb-2">*/}
                   {/*        /!*<Form.Control placeholder="Search" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>*!/*/}
                   {/*        <Link to="/search"><Button  onSubmit={handleSubmit} type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
@@ -41,8 +37,9 @@ export const MemberMenu = () => {
                       {/*    /!*<Form.Control placeholder="Search" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>*!/*/}
                       {/*    <Link to="/search"><Button  onSubmit={handleSubmit} type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
                       {/*  </InputGroup>*/}
-                    <SearchBar />
+                    <SearchBar className="p-2"/>
                     {/*<Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
+                    <Nav.Link as={Link}to={`/user/${userId}/reviews`}>Reviews</Nav.Link>
                     <Nav.Link as={Link}to="/inbox">Messages</Nav.Link>
                     <Nav.Link as={Link}to="/profile/">Profile </Nav.Link>
                     <Nav.Link as={Link}to="/logout">Logout</Nav.Link>

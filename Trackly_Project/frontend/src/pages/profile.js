@@ -50,7 +50,8 @@ export const Profile = () => {
                <Card style={{ width: '100%', height: '100%'}} className="profile-card">
       {/*<Card.Img variant="top" src= />*/}
       <Card.Body>
-                  <Card.Title>{username}'s Profile</Card.Title>
+                  <Card.Title><h3>{username}'s Profile</h3></Card.Title>
+          <Link to={`/user/${userId}/reviews`}><h4>See all reviews</h4></Link>
           <Row>
               <Col>
                   <Image src={profilePic} alt="user" roundedCircle />
@@ -98,7 +99,7 @@ export const Profile = () => {
     {/*    </Card.Footer>*/}
     {/*  </Card>*/}
     {/*</CardGroup>*/}
-  <Link to={`/user/${userId}/reviews`}>See all reviews</Link>
+
                 </Col>
           </Row>
 

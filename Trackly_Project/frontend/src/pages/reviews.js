@@ -13,7 +13,7 @@ export const Reviews = () => {
     const [reviews, setReviews] = useState("");
     const [error, setError] = useState("");
     const [isReviewAuthor, setReviewAuthor] = useState(false);
-    const [reviewContent, setReviewContent] = useState("");
+    const [reviewContent, setReviewContent] = useState([]);
     const [show, setShow] = useState(false);
     const [modalData, setModalData] = useState("");
     const [deleteMessage, setDeleteMessage] = useState("");
@@ -45,7 +45,6 @@ export const Reviews = () => {
 
     // getting the user's reviews
 
-    // async function getReviews() {
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/user/${id}/reviews/`)
             .then((response) => {
@@ -61,13 +60,10 @@ export const Reviews = () => {
 
     //  setting the initial content of each review, so it can be modified by the user
 
-    // function setInitialReviewContent(reviews) {
-    //     if(reviews.length > 0) {
+
             useEffect(() => {
-                    if(reviews.length > 0) {
+                    if(reviews.length > 1) {
                         const reviewData = reviews.map((review, i) => ({
-                            // setReviewContent({
-                    // ...reviewContent,
                      id: review.id,
                     title: review.title,
                     album: review.album,
@@ -77,9 +73,24 @@ export const Reviews = () => {
                     status: "published"
                 }));
                         setReviewContent(reviewData);
+                    }else if(reviews.length === 1) {
+                        // setReviewContent(reviews);
+                        //  console.log(reviews);
+                        const reviewData = {
+                            id: reviews[0].id,
+                            title: reviews[0].title,
+                            album: reviews[0].album,
+                            author: userId,
+                            content: reviews[0].content,
+                            rating: reviews[0].rating,
+                            status: "published"
+                        }
+                        setReviewContent([reviewData]);
                     }
+                        // console.log("review content data is " + reviewContent);
 
-                // console.log("initial review content is: " + reviewContent);
+
+                console.log("initial review content is: " + reviewContent);
 }, [reviews]);
              console.log("initial review content is: " + reviewContent);
 
@@ -88,18 +99,6 @@ export const Reviews = () => {
 
 //     fetching all comments for each review
 
-    // function getComments(reviewId) {
-    //      // if(reviewData) {
-    //         axios.get(`http://127.0.0.1:8000/api/review/${reviewId}`)
-    //             .then((response) => {
-    //                 setComments(response.data);
-    //                 console.log(response.data);
-    //
-    //             }).catch(error => {
-    //                 console.log("error fetching comments: " + error.message);
-    //         });
-    //
-    //     }
 
 useEffect( () => {
     if (reviews) {
@@ -111,13 +110,19 @@ useEffect( () => {
                 console.log("error fetching comments: " + error.message);
             });
         });
-        // if(reviewData) {
-        //
-        // }
     }
 }, [reviews]);
 
-console.log(comments);
+    const handleChange = (e) => {
+        setReviewContent({
+            ...reviewContent,
+            // trimming data as it has spaces
+            [e.target.name]: e.target.value.trim(),
+        });
+        console.log(reviewContent);
+    };
+
+// console.log(comments);
 
     const handleShow = (i) => {
         console.log(modalData);
@@ -157,15 +162,30 @@ console.log(comments);
     }
 
     function save(reviewId) {
-        const reviewToEdit = reviewContent.find((review) => review.id === reviewId);
-        if(reviewToEdit == undefined) {
+        const reviewToEdit = Array.isArray(reviewContent)
+    ? reviewContent.find((review) => review.id === reviewId)
+    // : reviews[0]
+      :  reviewContent
+        console.log("final review content is : " + reviewContent);
+        // let reviewToEdit;
+        // if(Array.isArray(reviewContent)) {
+        //     reviewToEdit = reviewContent.find((review) => review.id === reviewId);
+        // }else {
+        //
+        //     reviewToEdit = reviewContent.id;
+        // }
+        // const reviewToEdit = Array.isArray(reviewContent)
+    // ? reviewContent.find((review) => review.id === reviewId)
+    // : reviewId;
+        // const reviewToEdit = reviewContent.find((review) => review.id === reviewId);
+        if(reviewToEdit === undefined) {
             console.log("no changes to review");
             setVariant("danger");
             setDeletionStatus("Please edit your review to save it");
             setShowDeleteStatus(true);
         }
         // const reviewToEdit = reviews.find((review) => review.id === reviewId);
-        console.log("now editing review" + reviewToEdit.id);
+        // console.log("now editing review" + reviewToEdit.id);
         // console.log("review content:" + reviewContent);
             axios.put(`http://127.0.0.1:8000/api/review/${reviewId}/`, {
                 title: reviewToEdit.title,
@@ -193,14 +213,7 @@ console.log(comments);
     }
 
 
-    const handleChange = (e) => {
-        setReviewContent({
-            ...reviewContent,
-            // trimming data as it has spaces
-            [e.target.name]: e.target.value.trim(),
-        });
-        console.log(reviewContent);
-    };
+
 
     // to encourage the user to write reviews
     function noReviews() {
@@ -285,27 +298,28 @@ console.log(comments);
 
  {/*Comment code is from MDB Bootstrap Comment template https://mdbootstrap.com/docs/react/extended/comments/*/}
 
-                           {reviews &&
-                               <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
+                           {comments && comments.map((comment, index) => {
+                               return (
+                                   <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
                                     <MDBRow className="justify-content-center">
                                     <MDBCol md="8" lg="6">
                                     <MDBCard className="shadow-0 border" style={{ backgroundColor: "#f0f2f5" }}>
             <MDBCardBody>
-              <MDBInput wrapperClass="mb-4" placeholder="Type comment..." label="+ Add a note" />
+              <MDBInput wrapperClass="mb-4" placeholder="Type comment..." label="+ Add a comment" />
 
               <MDBCard className="mb-4">
                 <MDBCardBody>
-                  <p></p>
+                  <p>{comment.content}</p>
 
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-row align-items-center">
-                      <MDBCardImage
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp"
-                        alt="avatar"
-                        width="25"
-                        height="25"
-                      />
-                      <p className="small mb-0 ms-2">Martha</p>
+                      {/*<MDBCardImage*/}
+                      {/*  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp"*/}
+                      {/*  alt="avatar"*/}
+                      {/*  width="25"*/}
+                      {/*  height="25"*/}
+                      {/*/>*/}
+                      <p className="small mb-0 ms-2">{comment.user}</p>
                     </div>
                   </div>
                 </MDBCardBody>
@@ -314,7 +328,8 @@ console.log(comments);
           </MDBCard>
         </MDBCol>
       </MDBRow>
-    </MDBContainer>}
+    </MDBContainer>)})
+                               }
                        </Col>
                    </Row>
                </Card>

@@ -3,7 +3,7 @@ import albumImage from "../album-placeholder.png"
 import ReactPlayer from 'react-player'
 import {Link, useParams, useNavigate} from "react-router-dom";
 import{BiStar, BiDislike, BiSolidStar, BiSolidDislike, BiPlayCircle, BiHeart, BiSolidHeart} from "react-icons/bi";
-import {useEffect, useState, useContext, } from "react";
+import React, {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
 import axios from "axios";
 import AuthContext from "../AuthProvider";
@@ -19,6 +19,7 @@ export const Album = () => {
     const [variant, setVariant]= useState("");
     const [reviewShow, setReviewShow] = useState(false);
     const [invalidRating, setInvalidRating] = useState(true);
+    const [reviews, setReviews] = useState([]);
     const handleClose = () => setShow(false);
     const handleShow = () => {
         if(auth) {
@@ -80,12 +81,33 @@ export const Album = () => {
             }
 
         }
+
+        async function getReviews() {
+                try {
+                    await axios.get(`http://127.0.0.1:8000/api/albums/${album.id}/reviews/`)
+                        .then((res =>  {
+                            setReviews(res.data);
+                            // console.log("reviews for this album: " + res.data.title);
+                        }))
+                }catch(error) {
+                    console.log("couldn't fetch reviews");
+                }
+
+        }
  useEffect(() => {
      if(albumName) {
          getAlbum();
      }
 
   }, [albumName]);
+
+   useEffect(() => {
+     if(album) {
+         getReviews();
+     }
+
+  }, [album]);
+
 
     if(!album) {
         return (<div>Loading album information</div>)
@@ -102,12 +124,6 @@ export const Album = () => {
             setFavourite(true);
                  console.log(favourite);
         }
-    }
-
-    function addDislike() {
-        console.log("disliked");
-        setDislike(true);
-        console.log(dislike);
     }
 
     async function publish (e) {
@@ -157,11 +173,12 @@ export const Album = () => {
                 <Col>
                     <h3>{album.title}</h3>
                     <h5>{album.artist}</h5>
+                    <Link to="">Listen to the full album on Spotify</Link>
                 </Col>
                 <Col>
-                    <h5> <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating> 4.5 average star rating</h5>
+                    <h5> <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>
                     <h5><Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>{album.favourited_by} Favourites</h5>
-                    <h5><Rating onClick={addDislike} max={1} emptyIcon={<BiDislike></BiDislike>} icon={<BiSolidDislike></BiSolidDislike>}></Rating>{album.disliked_by} Dislikes</h5>
+                    {/*<h5><Rating onClick={addDislike} max={1} emptyIcon={<BiDislike></BiDislike>} icon={<BiSolidDislike></BiSolidDislike>}></Rating>{album.disliked_by} Dislikes</h5>*/}
                        <Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
                 </Col>
                 <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
@@ -207,36 +224,55 @@ export const Album = () => {
 
                 <Row className="album-pg-row">
                     <Col>
-                        <h4>Tracklist</h4>
-                        <ListGroup as="ol" numbered>
-                           <ListGroup.Item as="li">Dancer  <Button variant="outline-dark"  className="album-page-icons"  size="lg" onClick={playSong}><BiPlayCircle></BiPlayCircle></Button>
-                                  {/*<Button variant="outline-dark"  className="album-page-icons"  size="lg" >   */}
-                                      <Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>
-                                  {/*</Button>*/}
-                           </ListGroup.Item>
+                        {/*<h4>Tracklist</h4>*/}
+                        {/*<ListGroup as="ol" numbered>*/}
+                        {/*   <ListGroup.Item as="li">Dancer  <Button variant="outline-dark"  className="album-page-icons"  size="lg" onClick={playSong}><BiPlayCircle></BiPlayCircle></Button>*/}
+                        {/*          /!*<Button variant="outline-dark"  className="album-page-icons"  size="lg" >   *!/*/}
+                        {/*              <Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>*/}
+                        {/*          /!*</Button>*!/*/}
+                        {/*   </ListGroup.Item>*/}
 
-                        </ListGroup>
+                        {/*</ListGroup>*/}
 
                     </Col>
                     <Col>
-                        <h4>{album.review_count} Reviews</h4>
+                      <h4>{reviews.length === 1 ? "1 Review" : `${reviews.length} Reviews`}</h4>
+                        {reviews && reviews.map((review, index) => (
+                   <Row className="review-row">
+                      <Col className="mr-2" sm={3}>
+                          {/*<Image src={review.album_data.img_url} style={{width: '10rem'}}></Image>*/}
+                          <p><Link to={`/review/${review.id}`}>{review.title}</Link></p>
+                          <Rating alt="star-rating"  value={review.rating} readOnly></Rating>
+                          <p>{review.content}</p>
+                          <Link to={`/profile/${review.user_data.id}`}> <p>- {review.user_data.username}</p></Link>
+                       </Col>
+                       <Col xs={3}>
+                       </Col>
+                       {/*<Col className="review-content" sm={5}>*/}
+                            </Row>
+                    ))}
                     </Col>
                 </Row>
+
+
+                    {/*</Col>*/}
+
                 <Row>
                     <Col>
                           <div className="react-player">
 
-                      <ReactPlayer playing={playing} controls="true" url="https://p.scdn.co/mp3-preview/ecc6383aac4b3f4240ae699324573e61c39e6aaf?cid=b471434334d6439ea71999b5d6294d6a"></ReactPlayer>
+                      {/*<ReactPlayer playing={playing} controls="true" url="https://p.scdn.co/mp3-preview/ecc6383aac4b3f4240ae699324573e61c39e6aaf?cid=b471434334d6439ea71999b5d6294d6a"></ReactPlayer>*/}
 
                 </div>
                     </Col>
                 </Row>
                 <Row>
                        <Col>
-                           <Link to="">Listen to full song on Spotify</Link>
+                           {/*<Link to="">Listen to the full album on Spotify</Link>*/}
                     </Col>
                 </Row>
                 </Card>
         </Container>
     )
+
 }
