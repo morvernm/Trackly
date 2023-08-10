@@ -1,15 +1,33 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Container, Row, Col, Image, Dropdown, Card, Button, CardGroup, ListGroup} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import profilePic from '../images/profile-holder.svg';
+import {Link, useParams} from 'react-router-dom';
+import profilePic from '../images/user-placeholder.jpeg';
 import AuthContext from "../AuthProvider";
 import axiosInstance from '../axios';
 import axios from "axios";
 import {Reviews} from "./reviews";
 export const Profile = () => {
-    const {username, userId} = useContext(AuthContext);
-    const [review, setReviews] = useState(null);
+    const {userId} = useParams()
+    const {auth, username} = useContext(AuthContext);
+    const [reviews, setReviews] = useState(null);
     const [reviewsLoaded, setLoaded] = useState(false);
+    const [profileData, setProfileData] = useState([]);
+    const [profileUsername, setProfileUsername] = useState("");
+    const [editShow, setShow] = useState(false);
+    const [profileBelongsToUser, setProfileBelongsToUser] = useState(false);
+
+    async function getProfile() {
+        await axios.get(`http://127.0.0.1:8000/api/profile/user/${userId}`)
+            .then((response) => {
+                setProfileData(response.data);
+                setProfileUsername(response.data.user_data.username);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.log("error loading profile");
+            })
+    }
+
     async function getReviews(){
         await axios.get(`http://127.0.0.1:8000/api/user/${userId}/reviews/`)
             .then((response) => {
@@ -27,78 +45,78 @@ export const Profile = () => {
 
 
     }
+    function isAuthUser() {
+       if(profileUsername === username) {
+        setProfileBelongsToUser(true);
+        }
+    }
+
     useEffect(() => {
     getReviews();
+    getProfile();
+    isAuthUser();
   }, []);
+
+
     // getReviews();
 
     // const getFollowing() => {
     //
     // }
 
-    // const getUserData() => {
-    //
-    // }
 
-    // if(user.valueOf() !== )
-    // not same userID?
     const handleClick = (e) => {
 
     }
     return (
         <Container style={{display: "flex"}}>
                <Card style={{ width: '100%', height: '100%'}} className="profile-card">
-      {/*<Card.Img variant="top" src= />*/}
       <Card.Body>
-                  <Card.Title><h3>{username}'s Profile</h3></Card.Title>
-          <Link to={`/user/${userId}/reviews`}><h4>See all reviews</h4></Link>
+                  {/*<Card.Title><h3>{profileUsername}'s Profile</h3></Card.Title>*/}
           <Row>
               <Col>
-                  <Image src={profilePic} alt="user" roundedCircle />
-                    <h3>{username}</h3>
-                    <p>Bio</p>
-                  <div id="social-buttons" style={{display: "none"}}>
-                           <Button>Add</Button> <Button>Message</Button>
-                  </div>
+                  <Image style={{width: '8em', height: '8em'}} className="m-2" src={profilePic} alt="user" roundedCircle fluid/>
+                    <h3>{profileUsername}</h3>
+                  {profileBelongsToUser &&
+                      <Button variant="light" className="p-2 m-2" show={editShow}>Change Picture</Button>}
+                  <br /> <br />
 
                     <h4>Following</h4>
+                    <small className="text-muted">This feature is not available yet</small>
                     <div id="following-list">
-                          <Image src={profilePic} alt="user" roundedCircle />
-                          <Image src={profilePic} alt="user" roundedCircle />
-                          <Image src={profilePic} alt="user" roundedCircle />
+                    <br /><br />
+                        <Row className=" mx-2 row row-cols-2 p-2">
+                          <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
+                            <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
+                             <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
+                        </Row>
                     </div>
               </Col>
                                 <Col xs={6}>
-                    <h2>Favourites</h2>
-                      <Dropdown>
-                        <Dropdown.Toggle variant="success" id="dropdown-basic">Filter</Dropdown.Toggle>
-                          <Dropdown.Menu>
-                              <Dropdown.Item onClick={handleClick} href="#/action-1">Artists</Dropdown.Item>
-                              <Dropdown.Item onClick={handleClick}>Albums</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                                    <h3>Reviews</h3>
+                                    <Link to={`/user/${userId}/reviews`}><h5>See all reviews</h5></Link>
+                                    <Row className="mx-2 row row-cols-2 p-2">
+                                        {reviews && reviews.map((review, index) => (
+                                            <Card className="m-2" border="primary" style={{ width: '15rem' }}>
+                                                <Link to={`/album/${review.album_data.spotify_album_id}`}><Card.Img className="img-thumbnail" variant="top" src={review.album_data.img_url} /></Link>
+                                                <Card.Body>
+                                                     <Card.Title>{review.title}</Card.Title>
+                                                    <div className="profile-review-content">
+                                                        <Card.Text>{review.content}</Card.Text>
+                                                    </div>
+                                                </Card.Body>
+
+                                            </Card>
+
+                                    ))}
+                                    </Row>
+
+                                    <br />
+                                    <h4>Favourite Albums</h4>
+
                                     <div id="favourites-images">
 
                                     </div>
-                                    <h3>Reviews</h3>
-                                    {/*{reviewsLoaded ? }*/}
-                                    <Row className=" mx-2 row row-cols-2 p-2"></Row>
-                                    {/*<Reviews />*/}
-    {/*                                 <CardGroup>*/}
-    {/*  <Card>*/}
-    {/*    <Card.Img variant="top" src="holder.js/100px160" />*/}
-    {/*    <Card.Body>*/}
-    {/*      <Card.Title></Card.Title>*/}
-    {/*      <Card.Text>*/}
-    {/*        This is a wider card with supporting text below as a natural lead-in*/}
-    {/*        to additional content. This content is a little bit longer.*/}
-    {/*      </Card.Text>*/}
-    {/*    </Card.Body>*/}
-    {/*    <Card.Footer>*/}
-    {/*          <small className="text-muted">Published</small>*/}
-    {/*    </Card.Footer>*/}
-    {/*  </Card>*/}
-    {/*</CardGroup>*/}
 
                 </Col>
           </Row>

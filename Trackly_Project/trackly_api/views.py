@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.db.models import Avg
 from rest_framework import generics, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import RetrieveAPIView
@@ -45,6 +46,7 @@ class ReviewList(generics.ListCreateAPIView):
     # specifying what data we want from Review models
     # queryset = Review.reviewObject.all()  # getting all published reviews
     serializer_class = ReviewSerializer
+
     # pass
     def get_queryset(self):
         album_pk = self.kwargs['album_pk']  # Assuming 'album_pk' is the name of the URL parameter
@@ -113,8 +115,6 @@ class CreateAlbumView(generics.CreateAPIView):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
-    print(serializer_class)
-
 
 class CreateArtistView(generics.CreateAPIView):
     queryset = Artist.objects.all()
@@ -126,8 +126,12 @@ class SingleAlbumView(generics.RetrieveUpdateAPIView):
     serializer_class = AlbumSerializer
     # lookup_field = ('artist', 'title')
     lookup_field = 'spotify_album_id'
-    # lookup_field = 'slug'
-    # pass
+
+    # def get_queryset(self):
+    #     return Album.objects.annotate(
+    #         average_rating=Avg('reviews')
+    #     )
+    #     return queryset
 
 
 class CreateSongView(generics.CreateAPIView):
@@ -173,9 +177,15 @@ class RandomAlbums(generics.ListAPIView):
 class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = UserProfileSerializer
-    # lookup_field = User.username
+
+    # def get_queryset(self):
+    #     user_pk = self.kwargs['user_pk']
+    #     queryset = Profile.objects.filter(user__pk=user_pk)
+    #     return queryset
+    lookup_field = 'user'
 
 
+# To provide the username and id of the user
 class UserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -193,11 +203,16 @@ class WriteComment(generics.CreateAPIView):
     pass
 
 
-class CreateFavourite(generics.CreateAPIView):
-    serializer_class = FavouriteSerializer
-    pass
+# class CreateFavourite(generics.CreateAPIView):
+#     serializer_class = FavouriteSerializer
+#     pass
+
 
 class FavouriteList(generics.ListCreateAPIView):
     queryset = Favourite.objects.all()
     serializer_class = FavouriteSerializer
+    lookup_field = 'profile.user.pk'
     pass
+
+# class RecommendationList(generics.ListAPIView):
+#     serializer_class =

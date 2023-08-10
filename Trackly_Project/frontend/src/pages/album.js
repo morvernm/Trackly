@@ -1,8 +1,6 @@
 import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image, Alert} from "react-bootstrap";
-import albumImage from "../album-placeholder.png"
-import ReactPlayer from 'react-player'
 import {Link, useParams, useNavigate} from "react-router-dom";
-import{BiStar, BiDislike, BiSolidStar, BiSolidDislike, BiPlayCircle, BiHeart, BiSolidHeart} from "react-icons/bi";
+import{BiSolidStar, BiHeart, BiSolidHeart} from "react-icons/bi";
 import React, {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
 import axios from "axios";
@@ -10,16 +8,18 @@ import AuthContext from "../AuthProvider";
 
 export const Album = () => {
     const { albumName } = useParams();
-    // const { albumId } = useParams();
     const {auth, userId} = useContext(AuthContext);
     const [album, setAlbum] = useState(null);
-    const [playing, setPlaying] = useState(false);
     const [show, setShow] = useState(false);
     const [published, setPublished] = useState("");
     const [variant, setVariant]= useState("");
     const [reviewShow, setReviewShow] = useState(false);
     const [invalidRating, setInvalidRating] = useState(true);
     const [reviews, setReviews] = useState([]);
+    const [error, setError] = useState("");
+    const [showError, setShowError] = useState(false);
+
+    // handleClose and handleShow are for controlling the visibility of the review Modal
     const handleClose = () => setShow(false);
     const handleShow = () => {
         if(auth) {
@@ -27,12 +27,11 @@ export const Album = () => {
         }else {
             navigate("/login");
         }
-
     }
 
     const [favourite, setFavourite] = useState(false);
-    const [dislike, setDislike] = useState(false);
 
+    // initial review state
     const initialData = Object.freeze( {
         title: '',
         album: '',
@@ -41,11 +40,12 @@ export const Album = () => {
         rating: '',
         status: 'draft'
         }
-
     )
+
     const [reviewContent, setReviewContent] = useState(initialData);
     const navigate = useNavigate();
 
+  //   review form
   const handleChange = (e) => {
         if(e.target.name === "rating") {
             console.log("checking rating");
@@ -61,25 +61,19 @@ export const Album = () => {
         console.log(reviewContent);
     };
 
-            async function getAlbum() {
-
-    //     const getAlbum = async () => {
+  async function getAlbum() {
             try {
-                           // setAlbumName();
                  await axios.get(`http://127.0.0.1:8000/api/album/${albumName}`)
                  .then((res) => {
                      console.log("backend album id is " + res.data.id);
                      setReviewContent({...reviewContent, album: res.data.id});
                      setAlbum(res.data);
-
                  })
-                 // setAlbum(res.data);
             } catch(error) {
                 return (
                     <div>Error loading album!</div>
                 )
             }
-
         }
 
         async function getReviews() {
@@ -87,13 +81,12 @@ export const Album = () => {
                     await axios.get(`http://127.0.0.1:8000/api/albums/${album.id}/reviews/`)
                         .then((res =>  {
                             setReviews(res.data);
-                            // console.log("reviews for this album: " + res.data.title);
                         }))
                 }catch(error) {
                     console.log("couldn't fetch reviews");
                 }
-
         }
+
  useEffect(() => {
      if(albumName) {
          getAlbum();
@@ -115,14 +108,25 @@ export const Album = () => {
 
 
     function addFavourite() {
-        if(favourite) {
-            console.log("unfavourited");
-        setFavourite(false);
-             console.log(favourite);
+        if (auth) {
+            if (favourite) {
+                console.log("unfavourited");
+                setFavourite(false);
+            } else {
+                setFavourite(true);
+                axios.post(`http://127.0.0.1:8000/api/user/${userId}/add-favourite`, {
+                    favourite_albums: album.id,
+                    user: userId,
+                }).then((response) => {
+                    console.log("Favourited album");
+                }).catch((error) => {
+                    setError("Sorry we couldn't favourite this album. Please try again later");
+                    setShowError(true);
+                });
+            }
+        } else {
+            navigate('/login');
 
-        }else {
-            setFavourite(true);
-                 console.log(favourite);
         }
     }
 
@@ -135,7 +139,6 @@ export const Album = () => {
                 return console.log("user did not provide a rating");
             }
         if(auth)  {
-            // setReviewContent({...reviewContent, status: 'published'});
             console.log("publishing review");
             await axios.post('http://127.0.0.1:8000/api/review/create/', {
                 title: reviewContent.title,
@@ -158,10 +161,6 @@ export const Album = () => {
         }
         }
 
-    function playSong() {
-        console.log("Now playing song");
-        setPlaying(true);
-    }
 
     return (
         <Container className="album-page-container">
@@ -176,11 +175,14 @@ export const Album = () => {
                     <Link to="">Listen to the full album on Spotify</Link>
                 </Col>
                 <Col>
-                    <h5> <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>
+                    <h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>
                     <h5><Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>{album.favourited_by} Favourites</h5>
-                    {/*<h5><Rating onClick={addDislike} max={1} emptyIcon={<BiDislike></BiDislike>} icon={<BiSolidDislike></BiSolidDislike>}></Rating>{album.disliked_by} Dislikes</h5>*/}
                        <Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
+                    <Alert show={showError}>{error}</Alert>
                 </Col>
+
+                {/*review Modal*/}
+
                 <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
         <Modal.Header style={{color: 'black'}} closeButton><Modal.Title>Draft your review</Modal.Title></Modal.Header>
                        <Form id="review-form" onSubmit={publish}>
@@ -207,7 +209,6 @@ export const Album = () => {
                      <Form.Group
               className="mb-3"
               controlId="rating-group">
-                         {/*<Form.Control name="rating" as={Rating} required onChange={handleChange} />*/}
                          <Rating name="rating" onChange={handleChange}></Rating>
             </Form.Group>
                      <Button variant="primary" type="submit">Publish</Button>
@@ -222,54 +223,21 @@ export const Album = () => {
       </Modal>
             </Row>
 
+                {/*Mapping through the album's reviews*/}
+
                 <Row className="album-pg-row">
-                    <Col>
-                        {/*<h4>Tracklist</h4>*/}
-                        {/*<ListGroup as="ol" numbered>*/}
-                        {/*   <ListGroup.Item as="li">Dancer  <Button variant="outline-dark"  className="album-page-icons"  size="lg" onClick={playSong}><BiPlayCircle></BiPlayCircle></Button>*/}
-                        {/*          /!*<Button variant="outline-dark"  className="album-page-icons"  size="lg" >   *!/*/}
-                        {/*              <Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>*/}
-                        {/*          /!*</Button>*!/*/}
-                        {/*   </ListGroup.Item>*/}
-
-                        {/*</ListGroup>*/}
-
-                    </Col>
-                    <Col>
+                    <br />
                       <h4>{reviews.length === 1 ? "1 Review" : `${reviews.length} Reviews`}</h4>
+                        <Row>
                         {reviews && reviews.map((review, index) => (
-                   <Row className="review-row">
                       <Col className="mr-2" sm={3}>
-                          {/*<Image src={review.album_data.img_url} style={{width: '10rem'}}></Image>*/}
-                          <p><Link to={`/review/${review.id}`}>{review.title}</Link></p>
+                          <p><Link to={`/user/${review.user_data.id}/reviews`}>{review.title}</Link></p>
                           <Rating alt="star-rating"  value={review.rating} readOnly></Rating>
                           <p>{review.content}</p>
-                          <Link to={`/profile/${review.user_data.id}`}> <p>- {review.user_data.username}</p></Link>
+                          <Link to={`/profile/user/${review.user_data.id}`}> <p>- {review.user_data.username}</p></Link>
                        </Col>
-                       <Col xs={3}>
-                       </Col>
-                       {/*<Col className="review-content" sm={5}>*/}
-                            </Row>
                     ))}
-                    </Col>
                 </Row>
-
-
-                    {/*</Col>*/}
-
-                <Row>
-                    <Col>
-                          <div className="react-player">
-
-                      {/*<ReactPlayer playing={playing} controls="true" url="https://p.scdn.co/mp3-preview/ecc6383aac4b3f4240ae699324573e61c39e6aaf?cid=b471434334d6439ea71999b5d6294d6a"></ReactPlayer>*/}
-
-                </div>
-                    </Col>
-                </Row>
-                <Row>
-                       <Col>
-                           {/*<Link to="">Listen to the full album on Spotify</Link>*/}
-                    </Col>
                 </Row>
                 </Card>
         </Container>

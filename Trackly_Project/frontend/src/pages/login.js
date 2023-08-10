@@ -78,7 +78,6 @@ export default function Login() {
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                              <Form.Label>Password</Form.Label>
                              <Form.Control name="password" type="password" placeholder="********" required onChange={handleChange}/>
-                            <Form.Text classname="forgot-pass">Forgot your <a href="/">password?</a></Form.Text>
                         </Form.Group>
                         <Button variant="info" type="submit" size="lg"> Log in</Button>
                          <Alert variant={variant}>{status}</Alert>

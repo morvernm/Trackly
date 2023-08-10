@@ -25,7 +25,7 @@ import {SearchProvider} from "./SearchProvider";
 //         setAuthenticated(true);
 // };
 function App() {
-    const {auth } = useContext(AuthContext);
+    const {auth, userId } = useContext(AuthContext);
   console.log("authenticated value is " + auth);
   return (
       // <AuthProvider>
@@ -38,7 +38,7 @@ function App() {
               <Route path="/" element={<Main />} />
               <Route path="/search" element={<Search />} />
               <Route path="/inbox" element={<PrivateRoute><Inbox /> </PrivateRoute>} />
-              <Route path="/profile" element={<PrivateRoute><Profile /> </PrivateRoute>} />
+              <Route path="/profile/user/:userId/" element={<PrivateRoute><Profile /> </PrivateRoute>} />
               <Route path="/login" element={<Login />} />
                <Route path="/register" element={<Register />} />
               <Route path="/logout" element={<Logout />} />

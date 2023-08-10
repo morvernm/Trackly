@@ -146,37 +146,6 @@ export const Search = () => {
 }
 
 
-// async function fetchTracks(album) {
-//         try {
-//                let tracks = await fetch('https://api.spotify.com/v1/albums/' + album.id + '??market=GB' + searchParams)
-//                 .then(response => response.json())
-//                 .then(data =>  {
-//                     console.log("songs are" + data);
-//                 setTracks(data.items);
-//                 // if(Object.keys(data.items).length > 0) {
-//                 //     console.log("albums found:" + albumsFound);
-//                 //     createAlbums(data.items, artistData[1]);
-//                 // }
-//             });
-//         }catch (error) {
-//          console.log("could not add songs to database");
-//         }
-// }
-
-// fetchTracks(albums);
-// async function createSongs(tracks) {
-//         await axios.post('http://127.0.0.1:8000/api/song/create', {
-//             spotify_song_id: tracks.
-//             is_playable: album.is_playable
-//             title
-//             url
-//             favourited_by
-//             album: album.id
-//         })
-//
-// }
-// createSongs(albums);
-
     function checkIfAlbumsFound() {
         if(isLoaded && !albumsFound) {
             return (<Alert variant="light"><h4 className="m-2">Sorry no albums were found for this artist. Try searching for a different artist</h4></Alert>);

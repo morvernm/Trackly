@@ -35,6 +35,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -48,26 +49,26 @@ class AlbumSerializer(serializers.ModelSerializer):
         # lookup_field='slug',
     )
 
+    # average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, source='reviews', coerce_to_string=False)
+    # average_rating = serializers.SerializerMethodField()  # Use SerializerMethodField
+
+
+
     class Meta:
         model = Album
         fields = (
             'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by', 'disliked_by')
+        # 'average_rating')
 
     def create(self, validated_data):
-        # artist_id = validated_data.pop('artist')['spotify_artist_id']
-        # spotify_artist_id = validated_data.pop('artist')['spotify_artist_id']
         artist_slug = validated_data['artist']
         validated_data.pop('artist')
         artist = Artist.objects.get(name=artist_slug)
         validated_data['artist'] = artist
 
-        # album_exists = Album.objects.filter(spotify_album_id=validated_data['spotify_album_id']).first()
         album_exists = Album.objects.filter(spotify_album_id=validated_data['spotify_album_id']).exists()
 
         artist_exists = Artist.objects.filter(slug=artist_slug).first()
-
-        # if album_exists and artist_slug is not artist_slug:
-        #     album.artists.add(artist_slug)
 
         if not album_exists:
             # artist = Artist.objects.get(spotify_artist_id=artist_id)
@@ -76,12 +77,6 @@ class AlbumSerializer(serializers.ModelSerializer):
             # if artist_slug
             new_album = Album.objects.create(**validated_data)
             return new_album
-        # elif album_exists:
-        #     return album_exists
-        # elif not album_exists and not artist_exists:
-        #     new_artist = Artist.objects.create(name=artist_slug)
-        #     new_album = Album.objects.create(**validated_data)
-        #     return new_album
 
         return album_exists
 
@@ -92,21 +87,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status',
-                  'album_data', 'user_data')  # specifying the data we want to use
-        model = Review  # the model we're using
+                  'album_data', 'user_data',)
+        model = Review
 
     def create(self, validated_data):
-        # album_id = validated_data.pop('album')
-        # validated_data.pop('album')
-        # album = Album.objects.get(id=album_id)
-
-        # username = validated_data.pop('author')
-        # validated_data.pop('author')
-        # user = User.objects.get()
-        # primary_key = user.pk
-        # validated_data['author'] = user.pk
-        # validated_data['album'] = album
-
         review_exists = Review.objects.filter(album=validated_data.get('album'), author=validated_data.get('author'))
 
         if review_exists:
@@ -117,11 +101,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             album = validated_data.get('album')
             new_review = Review.objects.create(**validated_data)
             return new_review
-
-        # if not review_exists:
-        #
-        # else:
-        #     return
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -169,21 +148,30 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    user_data = UserSerializer(source='user', read_only=True)
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'image', 'bio')
-
-
-
+        fields = ('id', 'user_data', 'image', 'bio',)
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
+    user_data = UserSerializer(source='author', read_only=True)
+
     class Meta:
         model = Favourite
-        fields = ('user', 'favourite_albums')
+        fields = ('profile', 'album', 'user_data')
+
+    def create(self, validated_data):
+        # album_id = validated_data.pop('album')
+        # album = Album.objects.filter(pk=album_id)
+        # validated_data['favourite_albums'] = album
+        new_favourite = Favourite.objects.create(**validated_data)
+        return new_favourite
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'content', 'user', 'review', 'written')
+
+# class ProfileSerializer
