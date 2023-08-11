@@ -108,26 +108,26 @@ export const Album = () => {
 
 
     function addFavourite() {
-        if (auth) {
-            if (favourite) {
-                console.log("unfavourited");
-                setFavourite(false);
-            } else {
-                setFavourite(true);
-                axios.post(`http://127.0.0.1:8000/api/user/${userId}/add-favourite`, {
-                    favourite_albums: album.id,
-                    user: userId,
-                }).then((response) => {
-                    console.log("Favourited album");
-                }).catch((error) => {
-                    setError("Sorry we couldn't favourite this album. Please try again later");
-                    setShowError(true);
-                });
-            }
-        } else {
-            navigate('/login');
-
-        }
+        // if (auth) {
+        //     if (favourite) {
+        //         console.log("unfavourited");
+        //         setFavourite(false);
+        //     } else {
+        //         setFavourite(true);
+        //         axios.post(`http://127.0.0.1:8000/api/user/${userId}/add-favourite`, {
+        //             favourite_albums: album.id,
+        //             user: userId,
+        //         }).then((response) => {
+        //             console.log("Favourited album");
+        //         }).catch((error) => {
+        //             setError("Sorry we couldn't favourite this album. Please try again later");
+        //             setShowError(true);
+        //         });
+        //     }
+        // } else {
+        //     navigate('/login');
+        //
+        // }
     }
 
     async function publish (e) {

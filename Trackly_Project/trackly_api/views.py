@@ -209,10 +209,24 @@ class WriteComment(generics.CreateAPIView):
 
 
 class FavouriteList(generics.ListCreateAPIView):
-    queryset = Favourite.objects.all()
+    # queryset = Favourite.objects.all()
     serializer_class = FavouriteSerializer
-    lookup_field = 'profile.user.pk'
-    pass
+    # lookup_field = 'profile.user.pk'
+    # pass
+    def get_queryset(self):
+        user_pk = self.kwargs['user_pk']  # Fetch the user's primary key from URL
+        queryset = Favourite.objects.filter(profile__user__pk=user_pk)
+        return queryset
+
+    def perform_create(self, serializer):
+        user_pk = self.kwargs['user_pk']
+        if serializer.is_valid(raise_exception=True):
+            new_favourite = serializer.save(profile__user__pk=user_pk)
+            if new_favourite is not None:
+                return Response(status=status.HTTP_201_CREATED)
+
+        return Response(RegisterUserSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # class RecommendationList(generics.ListAPIView):
 #     serializer_class =

@@ -143,7 +143,7 @@ class Favourite(models.Model):
     # album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='favourited_album')
 
     def __str__(self):
-        return {self.album}
+        return str(self.album)
 
 
 class UserFollowing(models.Model):

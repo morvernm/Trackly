@@ -151,6 +151,7 @@ useEffect( () => {
                 if (updatedIndex !== -1) {
                     const updatedReview = {
                     ...reviewContent[updatedIndex],
+                    id: reviewContent.id,
                     title: reviewContent.title,
                     album: reviewContent.album,
                     content: reviewContent.content,

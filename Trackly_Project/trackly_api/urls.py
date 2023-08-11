@@ -25,7 +25,7 @@ urlpatterns = [
     path('user/<int:author_id>/reviews/', RetrieveUsersReviews.as_view(), name='userReviews'),
     path('review/<int:pk>/comments/', CommentList.as_view(), name='reviewComments'),
     path('review/<int:pk>/comments/write', WriteComment.as_view(), name='writeComment'),
-    path('user/<int:pk>/favourites', FavouriteList.as_view(), name='createFavourite')
+    path('user/<int:user_pk>/favourites', FavouriteList.as_view(), name='createFavourite')
 
 
 

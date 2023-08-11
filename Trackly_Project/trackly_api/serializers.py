@@ -156,17 +156,25 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class FavouriteSerializer(serializers.ModelSerializer):
     user_data = UserSerializer(source='author', read_only=True)
+    album_data = AlbumSerializer(source='album', read_only=True)
 
     class Meta:
         model = Favourite
-        fields = ('profile', 'album', 'user_data')
+        fields = ('profile', 'album', 'album_data', 'user_data')
 
     def create(self, validated_data):
-        # album_id = validated_data.pop('album')
+        album = validated_data.pop('album')
+        user_profile = validated_data.pop('profile')
+        # profile = Profile.objects.filter(user=user_profile)
         # album = Album.objects.filter(pk=album_id)
         # validated_data['favourite_albums'] = album
-        new_favourite = Favourite.objects.create(**validated_data)
-        return new_favourite
+        favourite_exists = Favourite.objects.filter(profile=user_profile, album=album).first()
+        if favourite_exists:
+            return Response(serializers.ValidationError("Album is already favourited"), status=status.HTTP_409_CONFLICT)
+        elif not favourite_exists:
+            new_favourite = Favourite.objects.create(**validated_data)
+            return new_favourite
+
 
 
 class CommentSerializer(serializers.ModelSerializer):

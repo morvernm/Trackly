@@ -268,3 +268,14 @@ footer {
     overflow-y: scroll;
     max-height: 100px;
 }
+
+#favourite-albums-row {
+  display: flex;
+  justify-content: center;
+}
+
+#user-reviews {
+  display: flex;
+  justify-content: center;
+
+}
