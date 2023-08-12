@@ -16,6 +16,7 @@ import PrivateRoute from './utils/PrivateRoute';
 import AuthContext from "./AuthProvider";
 import { Reviews } from "./pages/reviews"
 import {SearchProvider} from "./SearchProvider";
+import ScrollToTop from "./components/scrollToTop";
 
 
 
@@ -32,6 +33,7 @@ function App() {
       // <SearchProvider>
     <div className="App">
         <Router>
+              <ScrollToTop />
             <MemberMenu />
           {/*  the links for the application*/}
           <Routes>

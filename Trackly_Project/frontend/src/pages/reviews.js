@@ -5,6 +5,7 @@ import axios from "axios";
 import {Button, Card, Col, Container, Row, Image, Modal, Form, Alert} from "react-bootstrap";
 import {Rating} from "@mui/material";
 import {MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
+import profilePic from '../images/user-placeholder.jpeg';
 
 export const Reviews = () => {
     const { id } = useParams();
@@ -207,6 +208,9 @@ useEffect( () => {
                               <br/>   <br/>
                             <Card.Text>{review.content}</Card.Text>
 
+
+
+
                            {/*allowing review author to edit their review*/}
 
                            {isReviewAuthor &&
@@ -270,7 +274,8 @@ useEffect( () => {
                            template https://mdbootstrap.com/docs/react/extended/comments/*/}
 
                            {comments && comments.map((comment, index) => {
-                               return (
+                               if(review.id === comment.review) {
+                                              return (
                                    <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
                                     <MDBRow className="justify-content-center">
                                     <MDBCol md="8" lg="6">
@@ -284,13 +289,8 @@ useEffect( () => {
 
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-row align-items-center">
-                      <MDBCardImage
-                        src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp"
-                        alt="avatar"
-                        width="25"
-                        height="25"
-                      />
-                      <p className="small mb-0 ms-2">{comment.user}</p>
+                        <Link to={`/profile/user/${comment.user}`}><p className="small mb-0 ms-2">{comment.user_data.username}</p></Link>
+                        <br /><p className="m-2">{comment.written}</p>
                     </div>
                   </div>
                 </MDBCardBody>
@@ -299,7 +299,10 @@ useEffect( () => {
           </MDBCard>
         </MDBCol>
       </MDBRow>
-    </MDBContainer>)})
+    </MDBContainer>)
+
+                               }
+                    })
                                }
                        </Col>
                    </Row>

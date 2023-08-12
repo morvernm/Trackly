@@ -2,8 +2,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .views import ReviewList, SingleReview, CreateUserView, BlackListTokenView, CreateAlbumView, CreateArtistView, \
-    SingleAlbumView, CreateSongView, TrackListView, CreateReview, UserProfileView, UserView, RetrieveUsersReviews, \
-    CommentList, RandomAlbums, WriteComment, FavouriteList
+    SingleAlbumView, CreateReview, UserProfileView, UserView, RetrieveUsersReviews, \
+    CommentList, RandomAlbums, WriteComment, FavouriteList, AlbumFavouriteList
 
 app_name = 'trackly_api'
 
@@ -18,16 +18,11 @@ urlpatterns = [
     path('artist/create/', CreateArtistView.as_view(), name='artistCreate'),
     path('album/<str:spotify_album_id>/', SingleAlbumView.as_view(), name='viewAlbum'),
     path('random-album/', RandomAlbums.as_view(), name='randomAlbum'),
-    path('song/create/', CreateSongView.as_view(), name='createSong'),
-    path('album/<int:album_id>/songs/', TrackListView.as_view(), name='tracksList'),
     path('profile/user/<int:user>', UserProfileView.as_view(), name='profileView'),
     path('user/<str:username>/', UserView.as_view(), name='userView'),
     path('user/<int:author_id>/reviews/', RetrieveUsersReviews.as_view(), name='userReviews'),
-    path('review/<int:pk>/comments/', CommentList.as_view(), name='reviewComments'),
+    path('review/<int:review_pk>/comments/', CommentList.as_view(), name='reviewComments'),
     path('review/<int:pk>/comments/write', WriteComment.as_view(), name='writeComment'),
-    path('user/<int:user_pk>/favourites', FavouriteList.as_view(), name='createFavourite')
-
-
-
-
+    path('user/<int:user_pk>/favourites', FavouriteList.as_view(), name='createFavourite'),
+    path('album/<int:album_pk>/favourites', AlbumFavouriteList.as_view(), name='AllFavourites')
 ]

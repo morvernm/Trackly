@@ -10,17 +10,34 @@ export const AuthProvider = ({children}) => {
    const [username, setUsername] = useState(null);
 
    const [userId, setUserId] = useState(null);
+
+   const [profileId, setProfileId] = useState(null);
+
+   const [accessToken, setAccessToken] = useState();
+
     // let [authTokens, setAuthTokens] = useState(null);
 
 
     // let [user, setUser] = useState(null)
     // let [tokens, setTokens] = useState(null)
 
+    async function getProfileId(userId) {
+        await axios.get(`http://127.0.0.1:8000/api/profile/user/${userId}`)
+            .then((response) => {
+                console.log("Got Profile Id");
+                setProfileId(response.data.id);
+            })
+            .catch((error) => {
+                console.log("Could not get profile ID");
+            })
+        }
+
     async function getUserId(username) {
         await axios.get(`http://127.0.0.1:8000/api/user/${username}`)
             .then((response) => {
-                setUserId(response.data.id)
+                setUserId(response.data.id);
                 console.log("the user id is " + response.data.id);
+                getProfileId(response.data.id);
 
             })
             .catch((error) => {
@@ -29,9 +46,13 @@ export const AuthProvider = ({children}) => {
         )
     }
 
-    const login = (username) => {
+
+
+
+    const login = (username, token) => {
        setAuth(true);
         setUsername(username);
+        setAccessToken(token);
         getUserId(username);
 
        // console.log("access token is " + accessToken);
@@ -44,6 +65,7 @@ export const AuthProvider = ({children}) => {
         setAuth(false);
         setUsername(null)
         setUserId(null);
+        setAccessToken(null);
         // console.log("user value is " + user);
           console.log("authenticated value is " + auth);
     }
@@ -56,6 +78,8 @@ export const AuthProvider = ({children}) => {
         logout,
        userId,
        username,
+       profileId,
+       accessToken,
         // login: login,
         // logout: logout,
     }

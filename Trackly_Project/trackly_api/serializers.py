@@ -5,6 +5,7 @@ from rest_framework import serializers, status
 from trackly.models import Review, Album, Artist, Song, Profile, Favourite, Comment
 from django.contrib.auth.models import User
 from rest_framework.response import Response
+from django.db.models import F
 
 
 # this file supports the serialization and deserialization of model data from
@@ -13,7 +14,7 @@ from rest_framework.response import Response
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password')
 
         extra_kwargs = {'password': {'write_only': True}}
 
@@ -52,8 +53,6 @@ class AlbumSerializer(serializers.ModelSerializer):
     # average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, source='reviews', coerce_to_string=False)
     # average_rating = serializers.SerializerMethodField()  # Use SerializerMethodField
 
-
-
     class Meta:
         model = Album
         fields = (
@@ -71,10 +70,6 @@ class AlbumSerializer(serializers.ModelSerializer):
         artist_exists = Artist.objects.filter(slug=artist_slug).first()
 
         if not album_exists:
-            # artist = Artist.objects.get(spotify_artist_id=artist_id)
-            # new_album = Album.objects.create(album_data['spotify_album_id'], album_data['title'], album_data['artist'], album_data['img_url'], album_data['review_count'], album_data['favourited_by'])
-            # new_album = Album.objects.create(artist, **album_data)
-            # if artist_slug
             new_album = Album.objects.create(**validated_data)
             return new_album
 
@@ -92,15 +87,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         review_exists = Review.objects.filter(album=validated_data.get('album'), author=validated_data.get('author'))
-
         if review_exists:
-            return Response(status=status.HTTP_409_CONFLICT)
+            error_message = ({'album': 'You have already reviewed this album'})
+            return error_message
 
-        # review_exists.DoesNotExist:
-        if not review_exists:
-            album = validated_data.get('album')
-            new_review = Review.objects.create(**validated_data)
-            return new_review
+        new_review = Review.objects.create(**validated_data)
+        return new_review
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -121,34 +113,9 @@ class ArtistSerializer(serializers.ModelSerializer):
         return artist_exists
 
 
-class SongSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Song
-        fields = ('id', 'spotify_song_id', 'is_playable', 'title', 'url', 'favourited_by', 'album')
-
-    def create(self, validated_data):
-        spotify_song_id = validated_data.pop('spotify_song_id')
-        title = validated_data.pop('title')
-        # is_playable = serializers.BooleanField()
-        url = validated_data.pop('url')
-        favourited_by = validated_data.pop('favourited_by')
-        is_playable = validated_data.pop('is_playable')
-        album_slug = validated_data['album']
-        validated_data.pop('album')
-        album = Album.objects.get(slug=album_slug)
-        validated_data['album'] = album
-        song_exists = Song.objects.filter(song_id=spotify_song_id).first()
-
-        if not song_exists:
-            new_song = Song.objects.create(is_playable=is_playable, title=title, url=url,
-                                           spotify_song_id=spotify_song_id, favourited_by=favourited_by, album=album, )
-            return new_song
-
-        return song_exists
-
-
 class UserProfileSerializer(serializers.ModelSerializer):
     user_data = UserSerializer(source='user', read_only=True)
+
     class Meta:
         model = Profile
         fields = ('id', 'user_data', 'image', 'bio',)
@@ -158,28 +125,35 @@ class FavouriteSerializer(serializers.ModelSerializer):
     user_data = UserSerializer(source='author', read_only=True)
     album_data = AlbumSerializer(source='album', read_only=True)
 
+    # favourite_count = serializers.SerializerMethodField
+    #
+    # def get_favourite_count(self, obj):
+    #     return Favourite.objects.filter(album=obj.album).count()
+
     class Meta:
         model = Favourite
-        fields = ('profile', 'album', 'album_data', 'user_data')
+        fields = ('profile', 'album', 'album_data', 'user_data',)
 
     def create(self, validated_data):
-        album = validated_data.pop('album')
-        user_profile = validated_data.pop('profile')
-        # profile = Profile.objects.filter(user=user_profile)
-        # album = Album.objects.filter(pk=album_id)
-        # validated_data['favourite_albums'] = album
-        favourite_exists = Favourite.objects.filter(profile=user_profile, album=album).first()
+        album = validated_data.get('album')
+        user_profile = validated_data.get('profile')
+        favourite_exists = Favourite.objects.filter(profile=user_profile, album=album)
+        print(favourite_exists)
+
         if favourite_exists:
-            return Response(serializers.ValidationError("Album is already favourited"), status=status.HTTP_409_CONFLICT)
+            raise serializers.ValidationError("Album is already favourited")
         elif not favourite_exists:
             new_favourite = Favourite.objects.create(**validated_data)
+            print(f'Before increment: favourited_by = {album.favourited_by}')
+            # album.favourited_by = F('favourited_by') + 1
+            album.favourited_by += 1
+            album.save()
             return new_favourite
 
 
-
 class CommentSerializer(serializers.ModelSerializer):
+    user_data = UserSerializer(source='user', read_only=True)
+
     class Meta:
         model = Comment
-        fields = ('id', 'content', 'user', 'review', 'written')
-
-# class ProfileSerializer
+        fields = ('id', 'content', 'user', 'review', 'written', 'user_data',)

@@ -50,28 +50,22 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
-    # for retrieving a random album
-    # from spotifyAPI
     spotify_album_id = models.CharField(max_length=250, unique=True)
     title = models.CharField(max_length=250)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='album_artist')
-    secondArtist = models.ManyToManyField(Artist, related_name='album_artists')
     img_url = models.URLField()
-    # img = models.ImageField()
-    # songs = models.ForeignKey('Song', on_delete=models.CASCADE, related_name='album_songs',)
-    # reviews = models.ForeignKey('Review', on_delete=models.CASCADE, related_name='album_reviews', blank=True, null=True)
     review_count = models.PositiveIntegerField(default=0, blank=True, null=True)
     # count of the users who have favourited this album
     favourited_by = models.PositiveIntegerField(default=0, blank=True, null=True)
-    disliked_by = models.PositiveIntegerField(default=0, blank=True, null=True)
     slug = models.SlugField(max_length=100, unique=True, default=uuid.uuid4)
 
     def save(self, *args, **kwargs):
-        if Album.objects.filter(title=self.title).exists():
-            prefix = random.randint(0, 100000)
-            self.slug = prefix + slugify(self.title)
-        else:
-            self.slug = slugify(self.title)
+        if not self.slug:
+            if Album.objects.filter(title=self.title).exists():
+                prefix = random.randint(0, 100000)
+                self.slug = prefix + slugify(self.title)
+            else:
+                self.slug = slugify(self.title)
         super(Album, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -100,7 +94,6 @@ class Song(models.Model):
 
 
 class Review(models.Model):
-    # ReviewObjects code below is modelled off of Very Academy Learn DR video
     class ReviewObjects(models.Manager):
         # filter model by published - only show published reviews
         def get_queryset(self):
@@ -121,26 +114,23 @@ class Review(models.Model):
     objects = models.Manager()  # default manager returned in queryset
     reviewObject = ReviewObjects()  # review objects - filtered so only returning published posts
     published = models.DateTimeField(default=timezone.now)
-    # rating_options = [
-    #     ('F', 'Favourite'),
-    #     ('D', 'Dislike'),
-    #
-    # ]
     rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
 
-    # write fields for getting likes, favourites and dislikes
+
     class Meta:
         ordering = ('-published',)
+        unique_together = ('album', 'author',)
 
     def __str__(self):
-        return self.title  # return title of review
+        return self.title
 
 
 class Favourite(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='favourited_album')
-    # album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='favourited_album')
+
+    class Meta:
+        unique_together = ('profile', 'album',)
 
     def __str__(self):
         return str(self.album)

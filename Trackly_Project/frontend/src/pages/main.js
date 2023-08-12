@@ -97,11 +97,11 @@ const dashboard = () => {
 
             <Row>
                 <Col>
-                    <img className="album-img" src={album} alt="a music album" />
+                    {/*<img className="album-img" src={album} alt="a music album" />*/}
                     </Col>
 
                 <Col>
-                    <h3>Recommendations</h3>
+                    {/*<h3>Recommendations</h3>*/}
                 </Col>
 
             </Row>

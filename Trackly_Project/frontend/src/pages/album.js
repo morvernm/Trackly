@@ -8,7 +8,7 @@ import AuthContext from "../AuthProvider";
 
 export const Album = () => {
     const { albumName } = useParams();
-    const {auth, userId} = useContext(AuthContext);
+    const {auth, userId, profileId, accessToken} = useContext(AuthContext);
     const [album, setAlbum] = useState(null);
     const [show, setShow] = useState(false);
     const [published, setPublished] = useState("");
@@ -18,7 +18,9 @@ export const Album = () => {
     const [reviews, setReviews] = useState([]);
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
+    const [favourited, setFavourited] = useState(false);
 
+    console.log("Profile Id is: " + profileId);
     // handleClose and handleShow are for controlling the visibility of the review Modal
     const handleClose = () => setShow(false);
     const handleShow = () => {
@@ -38,7 +40,7 @@ export const Album = () => {
         author: userId,
         content: '',
         rating: '',
-        status: 'draft'
+        status: 'published'
         }
     )
 
@@ -108,26 +110,27 @@ export const Album = () => {
 
 
     function addFavourite() {
-        // if (auth) {
-        //     if (favourite) {
-        //         console.log("unfavourited");
-        //         setFavourite(false);
-        //     } else {
-        //         setFavourite(true);
-        //         axios.post(`http://127.0.0.1:8000/api/user/${userId}/add-favourite`, {
-        //             favourite_albums: album.id,
-        //             user: userId,
-        //         }).then((response) => {
-        //             console.log("Favourited album");
-        //         }).catch((error) => {
-        //             setError("Sorry we couldn't favourite this album. Please try again later");
-        //             setShowError(true);
-        //         });
-        //     }
-        // } else {
-        //     navigate('/login');
-        //
-        // }
+        if (auth) {
+            if (favourite) {
+                console.log("unfavourited");
+                setFavourite(false);
+            } else {
+                setFavourite(true);
+                axios.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
+                    album: album.id,
+                    profile: profileId
+                }).then((response) => {
+                    console.log("Favourited album");
+                     const updatedAlbum = { ...album, favourited_by: album.favourited_by + 1 } //updating the favourited_by value to users
+                     setAlbum(updatedAlbum);
+                }).catch((error) => {
+                    setError("Sorry we couldn't favourite this album. Please try again later");
+                    setShowError(true);
+                });
+            }
+        } else {
+            navigate('/login');
+        }
     }
 
     async function publish (e) {
@@ -140,13 +143,11 @@ export const Album = () => {
             }
         if(auth)  {
             console.log("publishing review");
-            await axios.post('http://127.0.0.1:8000/api/review/create/', {
-                title: reviewContent.title,
-                album: reviewContent.album,
-                author: reviewContent.author,
-                content: reviewContent.content,
-                rating: reviewContent.rating,
-                status: "published"
+            await axios.post('http://127.0.0.1:8000/api/review/create/', reviewContent, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
         }).then((res) => {
                 setPublished("Your review has been posted!");
                 setVariant("success");
@@ -154,6 +155,7 @@ export const Album = () => {
             }).catch(error => {
                     setReviewShow(true);
                     setPublished(`Sorry we couldn't post your review. Please try again later. Error: ${error.message}`);
+                    console.log(error.message.data);
                     setVariant("danger");
             });
         }else {
@@ -168,6 +170,7 @@ export const Album = () => {
             <Row className="album-pg-row">
                 <Col>
                     <Card.Img src={album.img_url} />
+                         <Button className="m-2" variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
                 </Col>
                 <Col>
                     <h3>{album.title}</h3>
@@ -175,9 +178,10 @@ export const Album = () => {
                     <Link to="">Listen to the full album on Spotify</Link>
                 </Col>
                 <Col>
-                    <h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>
-                    <h5><Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>{album.favourited_by} Favourites</h5>
-                       <Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
+                    {/*<h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>*/}
+                    <h5><Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>
+                        Favourited by {album.favourited_by} {album.favourited_by > 1 || album.favourited_by === 0 ? "Users" : "User" }</h5>
+                       {/*<Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>*/}
                     <Alert show={showError}>{error}</Alert>
                 </Col>
 
