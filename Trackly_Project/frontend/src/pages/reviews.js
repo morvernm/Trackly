@@ -24,6 +24,8 @@ export const Reviews = () => {
     const [comments, setComments] = useState("");
     const [reviewContent, setReviewContent] = useState([]);
 
+
+
     function checkIfAuthor() {
            console.log("checking if the current user is author");
         if(id == userId)  {
@@ -188,6 +190,7 @@ useEffect( () => {
         <Container className="review-container">
             <h1>Reviews</h1>
             <Link to={`/profile/user/${id}`}><h4>Back to profile</h4></Link>
+            {console.log(reviews)};
 
 
             {reviews.length === 0 ? noReviews() : reviews.map((review, i)  => { return (
@@ -202,7 +205,8 @@ useEffect( () => {
 
                        <Col xs={3}></Col>
                        <Col className="review-content" sm={5}>
-                           <h4>Review</h4>
+                           <h4>Review</h4><p>{review.published}</p>
+
                            <br />
                               <Card.Title>{review.title}</Card.Title>
                               <br/>   <br/>

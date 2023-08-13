@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .views import ReviewList, SingleReview, CreateUserView, BlackListTokenView, CreateAlbumView, CreateArtistView, \
     SingleAlbumView, CreateReview, UserProfileView, UserView, RetrieveUsersReviews, \
-    CommentList, RandomAlbums, WriteComment, FavouriteList, AlbumFavouriteList
+    CommentList, RandomAlbums, WriteComment, FavouriteList, AlbumFavouriteList, DeleteFavourite
 
 app_name = 'trackly_api'
 
@@ -24,5 +24,6 @@ urlpatterns = [
     path('review/<int:review_pk>/comments/', CommentList.as_view(), name='reviewComments'),
     path('review/<int:pk>/comments/write', WriteComment.as_view(), name='writeComment'),
     path('user/<int:user_pk>/favourites', FavouriteList.as_view(), name='createFavourite'),
-    path('album/<int:album_pk>/favourites', AlbumFavouriteList.as_view(), name='AllFavourites')
+    path('album/<int:album_pk>/favourites', AlbumFavouriteList.as_view(), name='AllFavourites'),
+    path('favourite/<int:pk>/', DeleteFavourite.as_view(), name='deleteFavourite')
 ]

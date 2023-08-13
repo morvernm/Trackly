@@ -19,6 +19,7 @@ export const Album = () => {
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
     const [favourited, setFavourited] = useState(false);
+    const [favouriteId, setFavouriteId] = useState("");
 
     console.log("Profile Id is: " + profileId);
     // handleClose and handleShow are for controlling the visibility of the review Modal
@@ -31,7 +32,6 @@ export const Album = () => {
         }
     }
 
-    const [favourite, setFavourite] = useState(false);
 
     // initial review state
     const initialData = Object.freeze( {
@@ -89,6 +89,23 @@ export const Album = () => {
                 }
         }
 
+        async function checkIfFavourited() {
+            await axios.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
+            .then((response) => {
+                console.log(response.data);
+                for(const favourite of response.data) {
+                    if(favourite.album === album.id) {
+                        setFavourited(true);
+                        setFavouriteId(favourite.id);
+                        break;
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("error getting favourites!");
+            })
+    }
+
  useEffect(() => {
      if(albumName) {
          getAlbum();
@@ -99,9 +116,10 @@ export const Album = () => {
    useEffect(() => {
      if(album) {
          getReviews();
+         checkIfFavourited();
      }
 
-  }, [album]);
+  }, [album, favourited]);
 
 
     if(!album) {
@@ -109,13 +127,25 @@ export const Album = () => {
     }
 
 
-    function addFavourite() {
+
+
+    function handleFavourite() {
         if (auth) {
-            if (favourite) {
-                console.log("unfavourited");
-                setFavourite(false);
+            if (favourited) {
+                axios.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
+                    .then((response) => {
+                        setError("Unfavourited album");
+                        setShowError(true);
+                        console.log("unfavourited");
+                        setFavourited(false);
+                    })
+                    .catch((error) => {
+                        setError("Sorry we could not unfavourite this album");
+                        setShowError(true);
+                    })
+
             } else {
-                setFavourite(true);
+                setFavourited(true);
                 axios.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
                     album: album.id,
                     profile: profileId
@@ -179,7 +209,7 @@ export const Album = () => {
                 </Col>
                 <Col>
                     {/*<h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>*/}
-                    <h5><Rating onClick={addFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={<BiSolidHeart></BiSolidHeart>}></Rating>
+                    <h5><Rating onClick={handleFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={favourited ? <BiSolidHeart /> : <BiHeart />}></Rating>
                         Favourited by {album.favourited_by} {album.favourited_by > 1 || album.favourited_by === 0 ? "Users" : "User" }</h5>
                        {/*<Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>*/}
                     <Alert show={showError}>{error}</Alert>

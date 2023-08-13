@@ -1,10 +1,5 @@
-from django.contrib.auth import login
-from django.db.models import Avg
 from rest_framework import generics, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -14,15 +9,11 @@ from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializ
     UserProfileSerializer, UserSerializer, CommentSerializer, FavouriteSerializer
 
 from trackly.models import Review, Album, Artist, Song, Profile, User, Comment, Favourite
-import json
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
 
 
 # review-related views
 
-
-# read-write endpoints representing a collection of reviews
+# read-write endpoints representing a collection of reviews for an album
 class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
 
@@ -32,10 +23,10 @@ class ReviewList(generics.ListCreateAPIView):
         return queryset
 
 
-# read or delete endpoints for a single review
+# Create/Read/Delete endpoints for reviews
 
 class SingleReview(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()  # getting all reviews
+    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     pass
 
@@ -61,7 +52,7 @@ class RetrieveUsersReviews(generics.ListCreateAPIView):
         return Review.objects.filter(author_id=user_pk)
 
 
-# authentication related views
+# Authentication related views
 
 class CreateUserView(APIView):
     permission_classes = [AllowAny]
@@ -89,7 +80,7 @@ class BlackListTokenView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# album and artist views
+# Album and artist views
 
 class CreateAlbumView(generics.CreateAPIView):
     queryset = Album.objects.all()
@@ -153,7 +144,10 @@ class WriteComment(generics.CreateAPIView):
     serializer_class = CommentSerializer
     pass
 
+# class DeleteComment(ge)
 
+
+# Endpoint for a user's favourites
 class FavouriteList(generics.ListCreateAPIView):
     serializer_class = FavouriteSerializer
 
@@ -163,9 +157,25 @@ class FavouriteList(generics.ListCreateAPIView):
         return queryset
 
 
+# All the favourites for an album
 class AlbumFavouriteList(generics.ListAPIView):
     serializer_class = FavouriteSerializer
 
     def get_queryset(self):
         album_pk = self.kwargs['album_pk']
         queryset = Favourite.objects.filter(album__pk=album_pk)
+
+
+class DeleteFavourite(generics.DestroyAPIView):
+    serializer_class = FavouriteSerializer
+    queryset = Favourite.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        favourite = self.get_object()
+        album = favourite.album
+
+        # Decrease the 'favourited-by' count in the album
+        album.favourited_by_count -= 1
+        album.save()
+
+        return super().destroy(request, *args, **kwargs)

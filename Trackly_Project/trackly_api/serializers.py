@@ -56,7 +56,7 @@ class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = (
-            'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by', 'disliked_by')
+            'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by',)
         # 'average_rating')
 
     def create(self, validated_data):
@@ -82,7 +82,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status',
-                  'album_data', 'user_data',)
+                  'album_data', 'user_data','published',)
         model = Review
 
     def create(self, validated_data):
