@@ -6,7 +6,7 @@ import AuthContext from "../AuthProvider";
 
 const PrivateRoute = ({children, ...rest}) => {
     const {auth} = useContext(AuthContext);
-    let [user, setUser] = useState(null)
+    // let [user, setUser] = useState(null)
 
     return !auth ? <Navigate to='/login'/> : children;
 }

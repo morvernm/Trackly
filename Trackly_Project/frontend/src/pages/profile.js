@@ -74,7 +74,7 @@ export const Profile = () => {
           <Row>
               <Col>
                   <Image style={{width: '8em', height: '8em'}} className="m-2" src={profilePic} alt="user" roundedCircle fluid/>
-                    <h3>{profileUsername}</h3>
+                    <h3 data-testid="username">{profileUsername}</h3>
                   {profileBelongsToUser &&
                       <Button variant="light" className="p-2 m-2" show={editShow}>Change Picture</Button>}
                   <br /> <br />

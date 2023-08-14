@@ -190,7 +190,6 @@ useEffect( () => {
         <Container className="review-container">
             <h1>Reviews</h1>
             <Link to={`/profile/user/${id}`}><h4>Back to profile</h4></Link>
-            {console.log(reviews)};
 
 
             {reviews.length === 0 ? noReviews() : reviews.map((review, i)  => { return (

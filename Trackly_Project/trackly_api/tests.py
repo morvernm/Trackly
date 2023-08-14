@@ -6,6 +6,8 @@ import json
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
+from .serializers import ReviewSerializer
+from rest_framework.exceptions import ValidationError
 
 import requests
 
@@ -15,10 +17,16 @@ client = APIClient()
 
 test_user_credentials = {
     'username': 'test_user',
-    'email': 'test_user@test.com',
+    'email': 'testuser@test.com',
     'password': 'test12345'
 }
 
+test_user_two_credentials = {
+    'username': 'test_user_two',
+    'email': 'testuser2@test.com',
+    'password': 'testing12394'
+
+}
 test_artist_data = {
     'spotify_artist_id': '129324',
     'name': 'testArtistName'
@@ -73,6 +81,9 @@ class CreateUserViewTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
+class LoginTests(TestCase):
+class LogoutTests(TestCase):
+
 # Review CRUD tests
 class ReviewTests(TestCase):
 
@@ -89,6 +100,7 @@ class ReviewTests(TestCase):
         self.user = User.objects.get(username=test_user_credentials.get('username'))
         self.access_token = user_data.get('access')
         client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+
 
         # creating a test artist instance and albums
         self.artist = Artist.objects.create(spotify_artist_id='12932', name='artistName')
@@ -170,7 +182,7 @@ class ReviewTests(TestCase):
             'status': 'published',
         }
 
-    def test_invalid_rating(self): # trying to post a rating value that exceeds the rating field's range
+    def test_invalid_rating(self):  # trying to post a rating value that exceeds the rating field's range
         response = client.post(
             reverse('trackly_api:createReview'),
             data=json.dumps(self.invalid_rating),
@@ -178,7 +190,7 @@ class ReviewTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_valid_review(self): #posting a review that has all the required fields
+    def test_valid_review(self):  # posting a review that has all the required fields
         response = client.post(
             reverse('trackly_api:createReview'),
             data=json.dumps(self.valid_review),
@@ -200,7 +212,11 @@ class ReviewTests(TestCase):
             data=json.dumps(self.negative_rating),
             content_type='application/json'
         )
+        serializer = ReviewSerializer(data=self.negative_rating)
+        review_is_valid = serializer.is_valid()
+        self.assertFalse(review_is_valid)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # with self.assertRaises(self, ValidationError)
 
     # Test for editing an existing review instance
     def test_edit_review(self):
@@ -211,23 +227,43 @@ class ReviewTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def delete_existing_review(self):
+    def test_delete_existing_review(self):
         response = client.delete(
             reverse('trackly_api:reviewCreate', args=([self.test_review.pk])),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        with self.assertRaises(Review.DoesNotExist):
+            Review.objects.get(id=self.test_review.pk)
 
-    def access_deleted_review(self):
+    def test_get_user_reviews(self):
         response = client.get(
-            reverse('trackly_api:reviewCreate', args=([self.test_review.pk])),
+            reverse('trackly_api:userReviews', kwargs={'author_id': self.user.id}),
             content_type='application/json'
         )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertRaises(self.test_review.DoesNotExist, Review.objects.get(pk=self.test_review.pk))
+        self.assertEqual(len(response.data), 1) # The user has only reviewed one album
+        self.assertTrue(any(review['id'] == self.test_review.id for review in response.data)) # checking that test_album_two is in the user's favourite
+
+    # Test getting all the reviews for an album that has reviews associated with it
+    def test_get_album_reviews_exist(self):
+        response = client.get(
+            reverse('trackly_api:listCreate', kwargs={'album_pk': self.album_two.pk}),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertTrue(any(review['id'] == self.test_review.id for review in response.data))
+
+    # testing an album that hasn't been reviewed yet: album_three
+    def test_get_album_reviews_do_not_exist(self):
+        response = client.get(
+            reverse('trackly_api:listCreate', kwargs={'album_pk': self.album_three.pk}),
+            content_type='application/json'
+        )
+        self.assertEqual(len(response.data), 0)
+        self.assertFalse(any(review['album'] == self.album_three_pk for review in response.data)) # No reviews exist
 
 
-# class GetReviews(TestCase):
 class FavouritesTests(TestCase):
     def setUp(self):
         self.artist = Artist.objects.create(**test_artist_data)
@@ -251,7 +287,10 @@ class FavouritesTests(TestCase):
             'profile': self.profile.pk,
             'album': self.album.pk,
         }
-        self.valid_favourite_two = {}
+        self.valid_favourite_two = {
+            'profile': self.profile.pk,
+            'album': self.album.pk,
+        }
 
     def test_add_favourite(self):
         response = client.post(
@@ -261,8 +300,6 @@ class FavouritesTests(TestCase):
 
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def create_duplicate_favourite(self):
         response = client.post(
             reverse('trackly_api:createFavourite', args=([self.user.pk, ])),
             data=json.dumps(self.valid_favourite),
@@ -270,3 +307,32 @@ class FavouritesTests(TestCase):
 
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_user_favourites(self):
+        create_favourite_response = client.post(
+            reverse('trackly_api:createFavourite', args=([self.user.pk, ])),
+            data=json.dumps(self.valid_favourite),
+            content_type='application/json'
+
+        )
+        album_id = create_favourite_response.data['album']
+        self.assertEqual(create_favourite_response.status_code, status.HTTP_201_CREATED)
+        response = client.get(
+            reverse('trackly_api:createFavourite', args=([self.user.pk, ])),
+            content_type='application/json'
+        )
+        self.assertTrue(any(favourite['album'] == album_id for favourite in response.data))
+
+    def test_get_all_album_favourites(self):
+        create_favourite_response = client.post(
+            reverse('trackly_api:createFavourite', args=([self.user.pk, ])),
+            data=json.dumps(self.valid_favourite),
+            content_type='application/json'
+
+        )
+        response = client.get(
+            reverse('trackly_api:AllFavourites', kwargs={'album_pk': self.album.id}),
+            content_type='application/json'
+        )
+        self.assertTrue(any(favourite['album'] == create_favourite_response.data['album'] for favourite in response.data))
+

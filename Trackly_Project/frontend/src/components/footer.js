@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Container, Nav } from 'react-bootstrap';
 export const Footer = () => {
         return (

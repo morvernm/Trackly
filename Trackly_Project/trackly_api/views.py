@@ -164,6 +164,7 @@ class AlbumFavouriteList(generics.ListAPIView):
     def get_queryset(self):
         album_pk = self.kwargs['album_pk']
         queryset = Favourite.objects.filter(album__pk=album_pk)
+        return queryset
 
 
 class DeleteFavourite(generics.DestroyAPIView):

@@ -1,9 +1,8 @@
-import {Row, Col, Button, Form, InputGroup, Container, Card, Dropdown, Alert, Offcanvas} from "react-bootstrap";
+import {Row, Button, Form, InputGroup, Container, Card, Alert,} from "react-bootstrap";
 import {BiSearch} from "react-icons/bi";
 import React, {useState, useEffect} from "react";
-import {SearchBar} from "../components/SearchBar";
-import {CLIENT_ID, CLIENT_SECRET, accessToken, expiry} from "../utils/spotify"
-import {createSearchParams, Link, useNavigate} from "react-router-dom";
+import {CLIENT_ID, CLIENT_SECRET} from "../utils/spotify"
+import {Link} from "react-router-dom";
 import axios from "axios";
 
 
@@ -15,17 +14,14 @@ export const Search = () => {
     const [expiry, setExpiry] = useState([])
     const [isLoaded, setLoaded] = useState(false);
     const [artistName, setArtistName] = useState("");
-    const [tracks, setTracks] = useState();
     const [errorMessage, setErrorMessage] = useState("");
     const [errorShow, setErrorShow] = useState(false);
 
-      const [show, setShow] = useState(false);
+    const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const navigate = useNavigate();
-  const [albumName, setAlbumName] = useState("");
 
 
     // request spotify access token

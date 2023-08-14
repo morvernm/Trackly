@@ -1,7 +1,7 @@
 import'./styles.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Main } from './pages/main';
-import {useContext, useEffect, useState} from "react";
+import {useContext} from "react";
 import Login  from './pages/login';
 import Register from './pages/register';
 import Logout from './components/logout';
@@ -15,22 +15,13 @@ import { Footer } from "./components/footer";
 import PrivateRoute from './utils/PrivateRoute';
 import AuthContext from "./AuthProvider";
 import { Reviews } from "./pages/reviews"
-import {SearchProvider} from "./SearchProvider";
 import ScrollToTop from "./components/scrollToTop";
 
 
-
-
-// const[authenticated, setAuthenticated] = useState(false);
-// if(localStorage.getItem('username') !== undefined) {
-//         setAuthenticated(true);
-// };
 function App() {
-    const {auth, userId } = useContext(AuthContext);
+    const {auth} = useContext(AuthContext);
   console.log("authenticated value is " + auth);
   return (
-      // <AuthProvider>
-      // <SearchProvider>
     <div className="App">
         <Router>
               <ScrollToTop />
@@ -54,8 +45,6 @@ function App() {
         </Router>
 
     </div>
-              // </SearchProvider>
-          /*</AuthProvider>*/
 
   );
 }
