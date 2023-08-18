@@ -7,8 +7,8 @@ import axiosInstance from '../axios';
 import axios from "axios";
 import {Reviews} from "./reviews";
 export const Profile = () => {
-    const {userId} = useParams()
-    const {auth, username} = useContext(AuthContext);
+    const {userId} = useParams();
+    const {auth, username, spotifyAccessToken} = useContext(AuthContext);
     const [reviews, setReviews] = useState(null);
     const [reviewsLoaded, setLoaded] = useState(false);
     const [profileData, setProfileData] = useState([]);
@@ -16,6 +16,9 @@ export const Profile = () => {
     const [editShow, setShow] = useState(false);
     const [profileBelongsToUser, setProfileBelongsToUser] = useState(false);
     const [favouriteAlbums, setFavouriteAlbums] = useState("");
+    const [following, setFollowing] = useState([]);
+    const [followingError, setFollowingError] = useState("");
+    const loggedInId = localStorage.getItem('user_id');
 
     async function getProfile() {
         await axios.get(`http://127.0.0.1:8000/api/profile/user/${userId}`)
@@ -59,12 +62,27 @@ export const Profile = () => {
         }
     }
 
+    function getFollowing() {
+        axios.get(`http://127.0.0.1:8000/api/user/${userId}/following`)
+            .then((response) => {
+                setFollowing(response.data);
+            })
+                .catch((error) => {
+                    setFollowingError("Sorry we could not load the users: " + error.message);
+                })
+        }
+
+
+
+
     useEffect(() => {
     getReviews();
     getProfile();
     isAuthUser();
     getFavourites();
+    getFollowing();
   }, []);
+
 
 
     return (
@@ -78,16 +96,17 @@ export const Profile = () => {
                   {profileBelongsToUser &&
                       <Button variant="light" className="p-2 m-2" show={editShow}>Change Picture</Button>}
                   <br /> <br />
-                    <h4>Following</h4>
-                    <small className="text-muted">This feature is not available yet</small>
-                    <div id="following-list">
-                    <br /><br />
+                    {/*<h4>Following</h4>*/}
+
                         <Row className=" mx-2 row row-cols-2 p-2">
-                          <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
-                            <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
-                             <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />
+                    {/*{following && following.map((user, index) =>  { return (*/}
+                    {/*    <div id="following-list">*/}
+                    {/*       <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />*/}
+                    {/*        <Link to={`/profile/user/${user.following_data.id}`}><p>{user.following_data.username}</p></Link>*/}
+                    {/*    </div>*/}
+                    {/*    )*/}
+                    {/*})}*/}
                         </Row>
-                    </div>
                   <br />
 
                   {/*Rendering the user's favourite albums */}
@@ -102,6 +121,8 @@ export const Profile = () => {
                             })}
                         </Carousel>
                     </Row>
+                  <br />
+                  <br />
               </Col>
 
               {/*Rendering the user's reviews*/}
@@ -127,6 +148,12 @@ export const Profile = () => {
         <Card.Text>
         </Card.Text>
       </Card.Body>
+                   <Row>
+                       <Col>
+
+
+                       </Col>
+                   </Row>
 
                <br /><br />
                 <Row>

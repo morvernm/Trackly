@@ -1,10 +1,11 @@
-import { createContext, useState } from 'react'
+import React, { createContext, useState } from 'react'
 import axios from "axios";
+import axiosInstance from "./axios";
+
 
 const AuthContext = createContext(false);
 
 export const AuthProvider = ({children}) => {
-
     const [auth, setAuth] = useState(false);
 
    const [username, setUsername] = useState(null);
@@ -15,11 +16,12 @@ export const AuthProvider = ({children}) => {
 
    const [accessToken, setAccessToken] = useState();
 
-    // let [authTokens, setAuthTokens] = useState(null);
+   const [refreshToken, setRefreshToken] = useState();
 
+   const [spotifyAccessToken, setSpotifyAccessToken] = useState("");
 
-    // let [user, setUser] = useState(null)
-    // let [tokens, setTokens] = useState(null)
+   const [spotifyExpiry, setExpirty] = useState("");
+
 
     async function getProfileId(userId) {
         await axios.get(`http://127.0.0.1:8000/api/profile/user/${userId}`)
@@ -36,8 +38,10 @@ export const AuthProvider = ({children}) => {
         await axios.get(`http://127.0.0.1:8000/api/user/${username}`)
             .then((response) => {
                 setUserId(response.data.id);
+                localStorage.setItem('user_id', response.data.id);
                 console.log("the user id is " + response.data.id);
                 getProfileId(response.data.id);
+
 
             })
             .catch((error) => {
@@ -49,39 +53,60 @@ export const AuthProvider = ({children}) => {
 
 
 
-    const login = (username, token) => {
+    const login = (username, token, refreshToken) => {
        setAuth(true);
         setUsername(username);
         setAccessToken(token);
-        getUserId(username);
-
-       // console.log("access token is " + accessToken);
-       // console.log("user value is " + user);
+        setRefreshToken(refreshToken);
+        getUserId(username).then(r => console.log(userId));
          console.log("authenticated value is " + auth);
     }
 
-    const logout = (username) => {
-        // console.log("access token is " + accessToken);
+    const logout = () => {
+                localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('user_id');
+            axiosInstance.defaults.headers['Authorization'] = null;
         setAuth(false);
         setUsername(null)
         setUserId(null);
         setAccessToken(null);
-        // console.log("user value is " + user);
+        setRefreshToken(null);
           console.log("authenticated value is " + auth);
     }
 
+    const setSpotifyToken = (token) => {
+        setSpotifyAccessToken(token);
+        console.log("Spotify token is " + token);
+    }
+
+    const setExpiry = (expiry) => {
+        setExpiry(expiry);
+        console.log("expiry is " + expiry);
+    }
+
+    function setAuthValue(b) {
+        setAuth(b);
+    }
+
    const contextData = {
-        // user: user,
-        // authTokens: authTokens,
         auth,
         login,
         logout,
-       userId,
-       username,
-       profileId,
-       accessToken,
-        // login: login,
-        // logout: logout,
+        userId,
+        username,
+        profileId,
+        accessToken,
+        setSpotifyToken,
+        spotifyAccessToken,
+        setExpiry,
+       spotifyExpiry,
+       refreshToken,
+       setAuth,
+       setAuthValue,
+       setUserId,
+
     }
 
     return(

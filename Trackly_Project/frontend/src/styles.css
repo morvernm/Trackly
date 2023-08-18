@@ -42,6 +42,7 @@ h1,h2,h2,h3,h4,h5 {
 
 .album-img {
   border-radius: 50px;
+  max-width: 40%;
   background: white;
   box-shadow:  20px 20px 0px white,
              -20px -20px 0px #6dd9dc;
@@ -89,8 +90,10 @@ height: 30px;
   text-decoration: none;
 }
 
-/*spinning logo animation from react app boilerplate code */
-/*@media screen*/
+/*Credit: Styling for the spinning logo animation below is from create react app startup code
+  https://create-react-app.dev/ https://github.com/facebook/create-react-app
+*/
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -105,6 +108,10 @@ height: 30px;
     transform: rotate(360deg);
   }
 }
+/*Credit: Styling for the spinning logo animation above is from create react app startup code
+  https://create-react-app.dev/ https://github.com/facebook/create-react-app
+*/
+
 
 /*login and register css*/
 
@@ -112,8 +119,7 @@ height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  /*height: 100vh;*/
-  height: 500px;
+  height: 80vh;
   flex-direction: column;
 }
 
@@ -122,15 +128,15 @@ height: 30px;
 }
 
 .login button {
-  margin: 1rem;
+  margin: 0.5rem;
+  width: 100%;
 }
 
 .login-form {
   padding: 30px;
   box-shadow:  0 .200rem 1rem;
-  /*width: 50%;*/
   border-radius: 50px;
-  /*color: #eeaeca;*/
+  width: 50%;
 }
 
 .form-text {
@@ -155,10 +161,6 @@ height: 30px;
   color: #9E4784;
 }
 
-#search-form {
-  display: inline;
-}
-
 footer {
   width: 100%;
   position: absolute;
@@ -179,7 +181,6 @@ footer {
   position: relative;
   min-height: 100vh;
   min-width: 100vw;
-  width: 100%;
   margin: 0px;
   padding: 0px;
 }

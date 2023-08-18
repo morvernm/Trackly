@@ -5,8 +5,11 @@ import {useContext, useState} from 'react';
 import AuthContext from "../AuthProvider";
 
 const PrivateRoute = ({children, ...rest}) => {
-    const {auth} = useContext(AuthContext);
-    // let [user, setUser] = useState(null)
+   let {auth} = useContext(AuthContext);
+    if(localStorage.getItem('access_token') != null) {
+        auth = true;
+    }
+            console.log(localStorage.getItem('access_token'));
 
     return !auth ? <Navigate to='/login'/> : children;
 }

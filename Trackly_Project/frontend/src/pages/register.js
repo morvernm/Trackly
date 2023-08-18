@@ -56,7 +56,7 @@ export default function Register()  {
         });
     }
     return (
-        <div className="login">
+        <div className="user-auth-div">
             <Container className="login">
                 <div className="login-form">
                     <h4>Register</h4>
@@ -81,9 +81,11 @@ export default function Register()  {
                              <Form.Label>Confirm Password</Form.Label>
                              <Form.Control name="confirmPassword" type="password" placeholder="********"  required onChange={handleChange}/>
                         </Form.Group>
-                        <Alert variant={variant}>{status}</Alert>
-                        <Button variant="info" type="submit" size="lg"> Sign up </Button>
-                       <Link to="/login"><Button variant="outline-light" size="lg"> Login </Button></Link>
+                        <Button variant="info" type="submit"> Sign up </Button>
+                        <br />
+                       <p style={{color: '#CCCCCC', display: 'inline'}}>Already have an account? <Link style={{color: 'white'}} to="/login">Login</Link></p>
+                           <Alert variant={variant}>{status}</Alert>
+                        {/*<Button style={{display: 'inline'}} variant="outline-light"> Login </Button>*/}
                     </Form>
                 </div>
             </Container>

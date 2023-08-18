@@ -1,6 +1,6 @@
 from django.contrib import admin
 # from trackly.models import UserProfile
-from .models import Review, Album, Artist, Profile, Song, Comment, UserFollowing, Favourite
+from .models import Review, Album, Artist, Profile, Comment, UserFollowing, Favourite
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff')
@@ -15,9 +15,3 @@ admin.site.register(Profile)
 admin.site.register(Favourite)
 admin.site.register(UserFollowing)
 admin.site.register(Comment)
-admin.site.register(Song)
-# admin.site.register(User, UserAdmin)
-# admin.site.unregister(User)
-# admin.site.register(User, UserAdmin)
-# SignUp your models here.
-# admin.site.register(UserProfile)

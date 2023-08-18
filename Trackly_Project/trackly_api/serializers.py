@@ -2,7 +2,7 @@ from django.contrib.admin.utils import lookup_field
 from django.http import HttpResponse
 from rest_framework import serializers, status
 # from Trackly_Project.trackly.models import Review
-from trackly.models import Review, Album, Artist, Song, Profile, Favourite, Comment
+from trackly.models import Review, Album, Artist, Profile, Favourite, Comment, UserFollowing
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from django.db.models import F
@@ -50,14 +50,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         # lookup_field='slug',
     )
 
-    # average_rating = serializers.DecimalField(max_digits=3, decimal_places=2, source='reviews', coerce_to_string=False)
-    # average_rating = serializers.SerializerMethodField()  # Use SerializerMethodField
 
     class Meta:
         model = Album
         fields = (
             'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by',)
-        # 'average_rating')
 
     def create(self, validated_data):
         artist_slug = validated_data['artist']
@@ -82,7 +79,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'title', 'album', 'author', 'content', 'rating', 'status',
-                  'album_data', 'user_data','published',)
+                  'album_data', 'user_data')
         model = Review
 
     def create(self, validated_data):
@@ -125,14 +122,9 @@ class FavouriteSerializer(serializers.ModelSerializer):
     user_data = UserSerializer(source='author', read_only=True)
     album_data = AlbumSerializer(source='album', read_only=True)
 
-    # favourite_count = serializers.SerializerMethodField
-    #
-    # def get_favourite_count(self, obj):
-    #     return Favourite.objects.filter(album=obj.album).count()
-
     class Meta:
         model = Favourite
-        fields = ('profile', 'album', 'album_data', 'user_data',)
+        fields = ('id', 'profile', 'album', 'album_data', 'user_data',)
 
     def create(self, validated_data):
         album = validated_data.get('album')
@@ -144,8 +136,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Album is already favourited")
         elif not favourite_exists:
             new_favourite = Favourite.objects.create(**validated_data)
-            print(f'Before increment: favourited_by = {album.favourited_by}')
-            # album.favourited_by = F('favourited_by') + 1
+            # print(f'Before increment: favourited_by = {album.favourited_by}')
             album.favourited_by += 1
             album.save()
             return new_favourite
@@ -153,7 +144,17 @@ class FavouriteSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     user_data = UserSerializer(source='user', read_only=True)
+    written = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
 
     class Meta:
         model = Comment
         fields = ('id', 'content', 'user', 'review', 'written', 'user_data',)
+
+
+# class FollowSerializer(serializers.ModelSerializer):
+#     following_data = UserSerializer(source='following_user_id', read_only=True)
+#
+#     class Meta:
+#         model = UserFollowing
+#         fields = ('user', 'following_user_id', 'following_data')
+

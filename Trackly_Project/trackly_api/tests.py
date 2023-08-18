@@ -81,8 +81,8 @@ class CreateUserViewTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class LoginTests(TestCase):
-class LogoutTests(TestCase):
+# class LoginTests(TestCase):
+# class LogoutTests(TestCase):
 
 # Review CRUD tests
 class ReviewTests(TestCase):
@@ -336,3 +336,5 @@ class FavouritesTests(TestCase):
         )
         self.assertTrue(any(favourite['album'] == create_favourite_response.data['album'] for favourite in response.data))
 
+
+# class FollowingTest(TestCase):

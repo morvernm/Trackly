@@ -1,14 +1,16 @@
 import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image, Alert} from "react-bootstrap";
 import {Link, useParams, useNavigate} from "react-router-dom";
-import{BiSolidStar, BiHeart, BiSolidHeart} from "react-icons/bi";
+import {BiSolidHeart} from "react-icons/bi";
+import { BsFillHeartbreakFill, BsFillHeartFill} from "react-icons/bs";
 import React, {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
 import axios from "axios";
 import AuthContext from "../AuthProvider";
+import axiosInstance from "../axios";
 
 export const Album = () => {
     const { albumName } = useParams();
-    const {auth, userId, profileId, accessToken} = useContext(AuthContext);
+    const {auth, userId, profileId, accessToken, refreshToken, spotifyAccessToken} = useContext(AuthContext);
     const [album, setAlbum] = useState(null);
     const [show, setShow] = useState(false);
     const [published, setPublished] = useState("");
@@ -20,8 +22,17 @@ export const Album = () => {
     const [showError, setShowError] = useState(false);
     const [favourited, setFavourited] = useState(false);
     const [favouriteId, setFavouriteId] = useState("");
+    const [toggleFavourited, setToggle] = useState(false);
+    const [spotifyLink, setSpotifyLink] = useState("");
 
-    console.log("Profile Id is: " + profileId);
+
+    let searchParams = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + spotifyAccessToken
+            }
+        }
     // handleClose and handleShow are for controlling the visibility of the review Modal
     const handleClose = () => setShow(false);
     const handleShow = () => {
@@ -92,10 +103,10 @@ export const Album = () => {
         async function checkIfFavourited() {
             await axios.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
             .then((response) => {
-                console.log(response.data);
                 for(const favourite of response.data) {
                     if(favourite.album === album.id) {
                         setFavourited(true);
+                        // setFavourited(prevFavourited => !prevFavourited);
                         setFavouriteId(favourite.id);
                         break;
                     }
@@ -104,6 +115,17 @@ export const Album = () => {
             .catch((error) => {
                 console.log("error getting favourites!");
             })
+    }
+
+        async function getSpotifyLink() {
+        let albumLink = await fetch('https://api.spotify.com/v1/albums/' + album.spotify_album_id + '?=market=GB', searchParams)
+            .then(response => response.json())
+            .then(data =>  {
+                setSpotifyLink(data.external_urls.spotify);
+            })
+            .catch((error) => {
+                 console.log("could not get link");
+            });
     }
 
  useEffect(() => {
@@ -117,6 +139,7 @@ export const Album = () => {
      if(album) {
          getReviews();
          checkIfFavourited();
+         getSpotifyLink();
      }
 
   }, [album, favourited]);
@@ -127,38 +150,50 @@ export const Album = () => {
     }
 
 
-
-
     function handleFavourite() {
         if (auth) {
-            if (favourited) {
-                axios.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
-                    .then((response) => {
-                        setError("Unfavourited album");
-                        setShowError(true);
-                        console.log("unfavourited");
-                        setFavourited(false);
-                    })
-                    .catch((error) => {
-                        setError("Sorry we could not unfavourite this album");
-                        setShowError(true);
-                    })
-
-            } else {
-                setFavourited(true);
+            if(favourited === false) {
                 axios.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
                     album: album.id,
                     profile: profileId
                 }).then((response) => {
                     console.log("Favourited album");
                      const updatedAlbum = { ...album, favourited_by: album.favourited_by + 1 } //updating the favourited_by value to users
+                     setError("Favourited album");
+                     setShowError(true);
                      setAlbum(updatedAlbum);
+                     setFavourited(true);
+                     return favourited;
                 }).catch((error) => {
                     setError("Sorry we couldn't favourite this album. Please try again later");
                     setShowError(true);
                 });
             }
         } else {
+            navigate('/login');
+        }
+    }
+
+    function handleUnfavourite() {
+        if(auth) {
+            if(favourited === true) {
+                axios.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
+                    .then((response) => {
+                        setError("Unfavourited album");
+                        setShowError(true);
+                        console.log("unfavourited");
+                        const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
+                        setAlbum(updatedAlbum);
+                        setFavourited(false);
+                        return favourited;
+                    })
+                    .catch((error) => {
+                        setError("Sorry we could not unfavourite this album");
+                        setShowError(true);
+                    })
+            }
+        }
+        else {
             navigate('/login');
         }
     }
@@ -173,11 +208,7 @@ export const Album = () => {
             }
         if(auth)  {
             console.log("publishing review");
-            await axios.post('http://127.0.0.1:8000/api/review/create/', reviewContent, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
+            await axiosInstance.post('http://127.0.0.1:8000/api/review/create/', reviewContent, {
         }).then((res) => {
                 setPublished("Your review has been posted!");
                 setVariant("success");
@@ -194,24 +225,30 @@ export const Album = () => {
         }
 
 
+
+
     return (
         <Container className="album-page-container">
             <Card className="main-card">
             <Row className="album-pg-row">
                 <Col>
                     <Card.Img src={album.img_url} />
-                         <Button className="m-2" variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
+                    <Button className="m-2" variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>
+                    <br />
+                     <Rating className="p-2" onClick={handleFavourite} max={1} emptyIcon={<BsFillHeartFill />} icon={<BsFillHeartFill />}></Rating>
+                    <Rating className="p-2" onClick={handleUnfavourite} max={1} emptyIcon={<BsFillHeartbreakFill />} icon={<BsFillHeartbreakFill />}  />
                 </Col>
                 <Col>
                     <h3>{album.title}</h3>
                     <h5>{album.artist}</h5>
-                    <Link to="">Listen to the full album on Spotify</Link>
+
                 </Col>
                 <Col>
                     {/*<h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>*/}
-                    <h5><Rating onClick={handleFavourite} max={1} emptyIcon={<BiHeart></BiHeart>} icon={favourited ? <BiSolidHeart /> : <BiHeart />}></Rating>
+                    <h5><BiSolidHeart />
                         Favourited by {album.favourited_by} {album.favourited_by > 1 || album.favourited_by === 0 ? "Users" : "User" }</h5>
-                       {/*<Button variant="info" style={{ textTransform: 'none' }} onClick={handleShow}>Write a Review</Button>*/}
+                       <Link target="_blank" to={spotifyLink}>Listen to the full album on Spotify</Link>
+                    <br />
                     <Alert show={showError}>{error}</Alert>
                 </Col>
 

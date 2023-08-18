@@ -1,7 +1,7 @@
 import'./styles.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Main } from './pages/main';
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import Login  from './pages/login';
 import Register from './pages/register';
 import Logout from './components/logout';
@@ -14,15 +14,27 @@ import { Album } from"./pages/album.js";
 import { Footer } from "./components/footer";
 import PrivateRoute from './utils/PrivateRoute';
 import AuthContext from "./AuthProvider";
+import { AuthProvider } from './AuthProvider';
 import { Reviews } from "./pages/reviews"
 import ScrollToTop from "./components/scrollToTop";
 
 
 function App() {
-    const {auth} = useContext(AuthContext);
-  console.log("authenticated value is " + auth);
+    const {auth, setAuth, userId, setUserId} = useContext(AuthContext);
+     useEffect(() => {
+        const storedToken = localStorage.getItem('access_token');
+        const storedUserId = localStorage.getItem('user_id');
+        if (storedToken) {
+            setAuth(true);
+            // setUserId(storedUserId);
+        }
+        if(storedUserId) {
+            setUserId(storedUserId);
+        }
+    }, [setAuth, setUserId]);
   return (
     <div className="App">
+        {/*<AuthProvider>*/}
         <Router>
               <ScrollToTop />
             <MemberMenu />
@@ -43,6 +55,7 @@ function App() {
 
             <Footer />
         </Router>
+            {/*</AuthProvider>*/}
 
     </div>
 

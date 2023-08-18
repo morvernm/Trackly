@@ -5,7 +5,6 @@ import axios from "axios";
 import {Button, Card, Col, Container, Row, Image, Modal, Form, Alert} from "react-bootstrap";
 import {Rating} from "@mui/material";
 import {MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
-import profilePic from '../images/user-placeholder.jpeg';
 
 export const Reviews = () => {
     const { id } = useParams();
@@ -23,6 +22,9 @@ export const Reviews = () => {
 
     const [comments, setComments] = useState("");
     const [reviewContent, setReviewContent] = useState([]);
+    const [commentContent, setCommentContent] = useState("");
+    const [commentError, setCommentError] = useState("");
+    const [commentShow, setCommentShow] = useState(false);
 
 
 
@@ -56,7 +58,7 @@ export const Reviews = () => {
 useEffect( () => {
     if (reviews) {
         reviews.map((review, i) => {
-            axios.get(`http://127.0.0.1:8000/api/review/${review.id}/comments/`)
+            axios.get(`http://127.0.0.1:8000/api/review/${review.id}/comments`)
                 .then((response) => {
                     setComments(response.data);
                 }).catch(error => {
@@ -85,8 +87,6 @@ useEffect( () => {
 
     // to control the visibility of the edit review Modal
     const handleShow = (i) => {
-        // setReviewToEdit[reviewContent]
-        console.log(modalData);
         setShow(true);
     };
 
@@ -129,7 +129,6 @@ useEffect( () => {
                 });
     }
 
-    // console.log(typeof reviewContent);
     function save(reviewId) {
         let indexOfReview;
         reviewContent.map((review, i) => {
@@ -176,6 +175,29 @@ useEffect( () => {
         setShow(false);
     }
 
+    function postComment(e, reviewId) {
+        // const index = reviewContent.findIndex(review => review.id === reviewId);
+        e.preventDefault();
+        const date =  new Date().toISOString();
+        if(auth) {
+            console.log(commentContent);
+            axios.post(`http://127.0.0.1:8000/api/review/${reviewId}/comments`, {
+                content: commentContent,
+                user: userId,
+                review: reviewId,
+                written: date
+            }).then((response) => {
+                    console.log("comment posted");
+                })
+                .catch((error) => {
+                    setCommentError("Sorry we couldn't post your comment");
+                    setCommentShow(true);
+
+                })
+        }
+
+    }
+
 
     // to encourage the user to write reviews
     function noReviews() {
@@ -191,7 +213,6 @@ useEffect( () => {
             <h1>Reviews</h1>
             <Link to={`/profile/user/${id}`}><h4>Back to profile</h4></Link>
 
-
             {reviews.length === 0 ? noReviews() : reviews.map((review, i)  => { return (
             <Card className="review-card mt-2 mb-5 p-2" >
                 <Row className="review-row">
@@ -204,9 +225,6 @@ useEffect( () => {
 
                        <Col xs={3}></Col>
                        <Col className="review-content" sm={5}>
-                           <h4>Review</h4><p>{review.published}</p>
-
-                           <br />
                               <Card.Title>{review.title}</Card.Title>
                               <br/>   <br/>
                             <Card.Text>{review.content}</Card.Text>
@@ -271,20 +289,24 @@ useEffect( () => {
                            }
                        </Col>
                        <Col className="comments">
-                           <h5>Comments</h5>
 
-                           {/*Comment code is from MDB Bootstrap Comment
-                           template https://mdbootstrap.com/docs/react/extended/comments/*/}
+
+{/*The Comment code below is from the MDB Bootstrap Comment
+ template https://mdbootstrap.com/docs/react/extended/comments/*/}
+
+                           <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
+                                  <h5>Comments</h5>
+                               <MDBRow className="justify-content-center">
+                                    <MDBCol md="8" lg="6">
+                                    <MDBCard className="shadow-0 border" style={{ backgroundColor: "#f0f2f5" }}>
+            <MDBCardBody>
+              <MDBInput  onChange={e => setCommentContent(e.target.value)}  name="comment" wrapperClass="mb-4" placeholder="Type comment..." label="+ Add a comment" />
+                <Button onClick={e => postComment(e, review.id)} className="m-2" style={{display: 'inherit'}}>Post</Button>
+                <Alert show={commentShow}>{commentError}</Alert>
 
                            {comments && comments.map((comment, index) => {
                                if(review.id === comment.review) {
                                               return (
-                                   <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
-                                    <MDBRow className="justify-content-center">
-                                    <MDBCol md="8" lg="6">
-                                    <MDBCard className="shadow-0 border" style={{ backgroundColor: "#f0f2f5" }}>
-            <MDBCardBody>
-              <MDBInput wrapperClass="mb-4" placeholder="Type comment..." label="+ Add a comment" />
 
               <MDBCard className="mb-4">
                 <MDBCardBody>
@@ -298,15 +320,14 @@ useEffect( () => {
                   </div>
                 </MDBCardBody>
               </MDBCard>
+ )}
+                    })
+                               }
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
       </MDBRow>
-    </MDBContainer>)
-
-                               }
-                    })
-                               }
+                           </MDBContainer>
                        </Col>
                    </Row>
                </Card>

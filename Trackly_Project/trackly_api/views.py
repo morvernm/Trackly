@@ -1,3 +1,4 @@
+from django.db.models import Subquery, Max
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ import random
 from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer, \
     UserProfileSerializer, UserSerializer, CommentSerializer, FavouriteSerializer
 
-from trackly.models import Review, Album, Artist, Song, Profile, User, Comment, Favourite
+from trackly.models import Review, Album, Artist, Profile, User, Comment, Favourite, UserFollowing
 
 
 # review-related views
@@ -106,7 +107,7 @@ class RandomAlbums(generics.ListAPIView):
         try:
             first_album = Album.objects.order_by("id").first()
             last_album = Album.objects.order_by("id").last()
-            random_album_ids = [random.randint(first_album.pk, last_album.pk) for _ in range(6)]
+            random_album_ids = [random.randint(first_album.pk, last_album.pk) for _ in range(7)]
             random_albums = Album.objects.filter(pk__in=random_album_ids)
             serializer = self.serializer_class(random_albums, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -140,13 +141,6 @@ class CommentList(generics.ListCreateAPIView):
     pass
 
 
-class WriteComment(generics.CreateAPIView):
-    serializer_class = CommentSerializer
-    pass
-
-# class DeleteComment(ge)
-
-
 # Endpoint for a user's favourites
 class FavouriteList(generics.ListCreateAPIView):
     serializer_class = FavouriteSerializer
@@ -167,16 +161,34 @@ class AlbumFavouriteList(generics.ListAPIView):
         return queryset
 
 
-class DeleteFavourite(generics.DestroyAPIView):
+class DeleteFavourite(generics.RetrieveDestroyAPIView):
     serializer_class = FavouriteSerializer
     queryset = Favourite.objects.all()
 
     def destroy(self, request, *args, **kwargs):
-        favourite = self.get_object()
-        album = favourite.album
-
-        # Decrease the 'favourited-by' count in the album
-        album.favourited_by_count -= 1
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        album = instance.album
+        album.favourited_by -= 1
         album.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-        return super().destroy(request, *args, **kwargs)
+# class FollowingList(generics.ListCreateAPIView):
+#     serializer_class = FollowSerializer
+#     queryset = UserFollowing.objects.all()
+#
+#     def get_queryset(self):
+#         user_pk = self.kwargs['user_pk']
+#         queryset = UserFollowing.objects.filter(user=user_pk)
+#         return queryset
+
+
+
+class RecentReviewsAPIView(APIView):
+    def get(self, request, format=None):
+        query = Review.objects.values('album').annotate(max_published=Max('published')) #getting albums based on max published time/date
+        recent_reviews = Review.objects.filter(
+            published__in=Subquery(query.values('max_published'))
+        ).order_by('-published')[:7] #filtering reviews by the 7 most recently published
+        serializer = ReviewSerializer(recent_reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

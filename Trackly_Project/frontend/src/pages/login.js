@@ -32,7 +32,6 @@ export default function Login() {
         console.log(loginFormData);
         e.preventDefault();
 
-        // using axios to send from frontend to django backend
         axiosInstance
             .post(`token/`, {
                 username: loginFormData.username,
@@ -42,14 +41,10 @@ export default function Login() {
 
                 // store their access and refresh token in local storage
                 localStorage.setItem('access_token', res?.data?.access);
-                console.log("local storage access token is " + localStorage.getItem('access_token'));
                 localStorage.setItem('refresh_token', res?.data?.refresh);
-                console.log("local storage refresh value is " + localStorage.getItem('refresh_token'));
                 localStorage.setItem('username', loginFormData.username);
-                 console.log("local storage username value is " + localStorage.getItem('username'));
                  const accessToken = res?.data?.access;
-                        login(localStorage.getItem('username'), localStorage.getItem('access_token'));
-                        console.log("authenticated value is " + auth);
+                 login(localStorage.getItem('username'), localStorage.getItem('access_token'),localStorage.getItem('refresh_token') );
                 axiosInstance.defaults.headers['Authorization'] =
                     'JWT ' + localStorage.getItem('access_token');
                 navigate("/");
@@ -64,7 +59,7 @@ export default function Login() {
     }
 
     return (
-        <div className="login">
+        <div className="user-auth-div">
             <Container className="login">
                 <div className="login-form">
                     <h4>Login</h4>
@@ -80,12 +75,12 @@ export default function Login() {
                              <Form.Label>Password</Form.Label>
                              <Form.Control name="password" type="password" placeholder="********" required onChange={handleChange}/>
                         </Form.Group>
-                        <Button variant="info" type="submit" size="lg"> Log in</Button>
-                         <Alert variant={variant}>{status}</Alert>
-                        <Link to="/register"><Button variant="outline-light" type="submit" size="lg"> Create an account</Button></Link>
+                        <Button className="mb-2" variant="info" type="submit" size="lg"> Log in</Button>
+                        <br />
+                        <Link style={{color: 'white'}} to="/register">Create an account</Link>
+                        <Alert variant={variant}>{status}</Alert>
                     </Form>
                 </div>
-                {/*</div>*/}
             </Container>
 
 

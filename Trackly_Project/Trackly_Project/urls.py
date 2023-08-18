@@ -22,10 +22,7 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    # maps basic url to index view from our views.py file in trackly
-    # path('', views.index, name='index'),
     # mapping urls beginning with trackly/ to trackly's urls.py
-    # path('trackly/', include('trackly.urls', namespace='trackly')),
     path('', include('trackly.urls', namespace='trackly')),
     path('admin/', admin.site.urls),
     path('api/', include('trackly_api.urls', namespace='trackly_api')),

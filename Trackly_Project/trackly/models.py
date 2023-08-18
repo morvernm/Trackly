@@ -72,27 +72,6 @@ class Album(models.Model):
         return self.title
 
 
-class Song(models.Model):
-    # class TrackObjects(models.Manager):
-    #     def get_queryset(self):
-    #         return super().get_queryset().filter(Album.title)
-
-    # spotify songID
-    spotify_song_id = models.CharField(max_length=250, )
-    title = models.CharField(max_length=250, )
-    is_playable = models.BooleanField()
-    url = models.URLField()
-    # number of users who have favourited the song
-    favourited_by = models.IntegerField(default=0)
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='album_track', )
-
-    # objects = models.Manager()
-    # trackObject = TrackObjects()
-
-    def __str__(self):
-        return self.title
-
-
 class Review(models.Model):
     class ReviewObjects(models.Manager):
         # filter model by published - only show published reviews
@@ -137,8 +116,14 @@ class Favourite(models.Model):
 
 
 class UserFollowing(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     following_user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
+
+    class Meta:
+        unique_together = ('user', 'following_user_id')
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Comment(models.Model):
