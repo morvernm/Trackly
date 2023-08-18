@@ -101,7 +101,7 @@ export const Album = () => {
         }
 
         async function checkIfFavourited() {
-            await axios.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
+            await axiosInstance.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
             .then((response) => {
                 for(const favourite of response.data) {
                     if(favourite.album === album.id) {
@@ -153,7 +153,7 @@ export const Album = () => {
     function handleFavourite() {
         if (auth) {
             if(favourited === false) {
-                axios.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
+                axiosInstance.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
                     album: album.id,
                     profile: profileId
                 }).then((response) => {
@@ -177,13 +177,16 @@ export const Album = () => {
     function handleUnfavourite() {
         if(auth) {
             if(favourited === true) {
-                axios.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
+                axiosInstance.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
                     .then((response) => {
+                        // setError("Unfavourited album");
+                        // setShowError(true);
+                        // console.log("unfavourited");
+                        const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
+                        setAlbum(updatedAlbum);
                         setError("Unfavourited album");
                         setShowError(true);
                         console.log("unfavourited");
-                        const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
-                        setAlbum(updatedAlbum);
                         setFavourited(false);
                         return favourited;
                     })

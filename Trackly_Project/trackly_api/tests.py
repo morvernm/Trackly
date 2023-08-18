@@ -266,6 +266,19 @@ class ReviewTests(TestCase):
 
 class FavouritesTests(TestCase):
     def setUp(self):
+        self.register_user_url = reverse('trackly_api:userCreate')
+        self.user_create = self.client.post(self.register_user_url, test_user_credentials)  # a review author
+        jwt_auth_url = reverse('token_obtain_pair')  # JWT token generation URL
+        self.response = self.client.post(jwt_auth_url, {  # generate JWT auth tokens for the first test user
+            'username': test_user_credentials.get('username'),
+            'password': test_user_credentials.get('password')
+        })
+
+        user_data = self.response.json()
+        self.user = User.objects.get(username=test_user_credentials.get('username'))
+        self.access_token = user_data.get('access')
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+
         self.artist = Artist.objects.create(**test_artist_data)
 
         test_album_data = {
@@ -278,9 +291,9 @@ class FavouritesTests(TestCase):
         }
 
         self.album = Album.objects.create(**test_album_data)
-        self.register_user_url = reverse('trackly_api:userCreate')
-        self.user_create = self.client.post(self.register_user_url, test_user_credentials)  # create the user
-        self.user = User.objects.get(username=test_user_credentials.get('username'))
+        # self.register_user_url = reverse('trackly_api:userCreate')
+        # self.user_create = self.client.post(self.register_user_url, test_user_credentials)  # create the user
+
         self.profile = Profile.objects.get(user=self.user)
 
         self.valid_favourite = {
