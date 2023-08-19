@@ -27,6 +27,7 @@ class ReviewList(generics.ListCreateAPIView):
 # Create/Read/Delete endpoints for reviews
 
 class SingleReview(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     pass
@@ -131,6 +132,7 @@ class UserView(generics.RetrieveAPIView):
 
 
 class CommentList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     # queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
@@ -143,6 +145,7 @@ class CommentList(generics.ListCreateAPIView):
 
 # Endpoint for a user's favourites
 class FavouriteList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = FavouriteSerializer
 
     def get_queryset(self):
@@ -162,6 +165,7 @@ class AlbumFavouriteList(generics.ListAPIView):
 
 
 class DeleteFavourite(generics.RetrieveDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = FavouriteSerializer
     queryset = Favourite.objects.all()
 

@@ -1,6 +1,6 @@
 import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image, Alert} from "react-bootstrap";
 import {Link, useParams, useNavigate} from "react-router-dom";
-import {BiSolidHeart} from "react-icons/bi";
+import {BiSolidHeart, BiSolidStar} from "react-icons/bi";
 import { BsFillHeartbreakFill, BsFillHeartFill} from "react-icons/bs";
 import React, {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
@@ -101,7 +101,7 @@ export const Album = () => {
         }
 
         async function checkIfFavourited() {
-            await axios.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
+            await axiosInstance.get(`http://127.0.0.1:8000/api/user/${userId}/favourites`)
             .then((response) => {
                 for(const favourite of response.data) {
                     if(favourite.album === album.id) {
@@ -153,7 +153,7 @@ export const Album = () => {
     function handleFavourite() {
         if (auth) {
             if(favourited === false) {
-                axios.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
+                axiosInstance.post(`http://127.0.0.1:8000/api/user/${userId}/favourites`, {
                     album: album.id,
                     profile: profileId
                 }).then((response) => {
@@ -177,13 +177,13 @@ export const Album = () => {
     function handleUnfavourite() {
         if(auth) {
             if(favourited === true) {
-                axios.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
+                axiosInstance.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
                     .then((response) => {
+                        const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
+                        setAlbum(updatedAlbum);
                         setError("Unfavourited album");
                         setShowError(true);
                         console.log("unfavourited");
-                        const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
-                        setAlbum(updatedAlbum);
                         setFavourited(false);
                         return favourited;
                     })
@@ -244,7 +244,9 @@ export const Album = () => {
 
                 </Col>
                 <Col>
-                    {/*<h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>*/}
+                    {album.average_rating !== -1 && <h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average rating</h5>}
+
+                    <br />
                     <h5><BiSolidHeart />
                         Favourited by {album.favourited_by} {album.favourited_by > 1 || album.favourited_by === 0 ? "Users" : "User" }</h5>
                        <Link target="_blank" to={spotifyLink}>Listen to the full album on Spotify</Link>

@@ -2,6 +2,7 @@ import {useParams, Link} from "react-router-dom";
 import React, {useContext, useEffect, useState} from "react";
 import AuthContext from "../AuthProvider";
 import axios from "axios";
+import axiosInstance from "../axios";
 import {Button, Card, Col, Container, Row, Image, Modal, Form, Alert} from "react-bootstrap";
 import {Rating} from "@mui/material";
 import {MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
@@ -39,7 +40,7 @@ export const Reviews = () => {
     // getting the user's reviews
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/user/${id}/reviews/`)
+        axiosInstance.get(`http://127.0.0.1:8000/api/user/${id}/reviews/`)
             .then((response) => {
                 setReviews(response.data);
                 setReviewContent(response.data);
@@ -58,7 +59,7 @@ export const Reviews = () => {
 useEffect( () => {
     if (reviews) {
         reviews.map((review, i) => {
-            axios.get(`http://127.0.0.1:8000/api/review/${review.id}/comments`)
+            axiosInstance.get(`http://127.0.0.1:8000/api/review/${review.id}/comments`)
                 .then((response) => {
                     setComments(response.data);
                 }).catch(error => {
@@ -102,7 +103,7 @@ useEffect( () => {
 
     function deleteReview(reviewId) {
         console.log("now deleting review " + reviewId);
-        axios.delete(`http://127.0.0.1:8000/api/review/${reviewId}`)
+        axiosInstance.delete(`http://127.0.0.1:8000/api/review/${reviewId}`)
             .then(response => {
                 setShowWarning(false);
                 console.log("Review deleted");
@@ -138,7 +139,7 @@ useEffect( () => {
         })
         let reviewToEdit = reviewContent[indexOfReview];
         console.log("review to edit is " + reviewToEdit);
-            axios.put(`http://127.0.0.1:8000/api/review/${reviewId}/`, {
+            axiosInstance.put(`http://127.0.0.1:8000/api/review/${reviewId}/`, {
                 title: reviewToEdit.title,
                 album: reviewToEdit.album,
                 author: reviewToEdit.author,
@@ -181,7 +182,7 @@ useEffect( () => {
         const date =  new Date().toISOString();
         if(auth) {
             console.log(commentContent);
-            axios.post(`http://127.0.0.1:8000/api/review/${reviewId}/comments`, {
+            axiosInstance.post(`http://127.0.0.1:8000/api/review/${reviewId}/comments`, {
                 content: commentContent,
                 user: userId,
                 review: reviewId,

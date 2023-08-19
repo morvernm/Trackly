@@ -2,8 +2,10 @@ import axios from 'axios';
 
 const baseURL = 'http://127.0.0.1:8000/api/';
 
-/*
-    Code in this file is from this tutorial code:
+/* This file is for sending authenticated requests to the backend API endpoints.
+	It includes the user's access token in the headers.
+
+    The code in this file is from this tutorial code:
     Title: YT-Django-DRF-Simple-Blog-Series-JWT-Part-3
     Author: veryacademy
     Availability: https://github.com/veryacademy/YT-Django-DRF-Simple-Blog-Series-JWT-Part-3/blob/master/react/blogapi/src/axios.js
