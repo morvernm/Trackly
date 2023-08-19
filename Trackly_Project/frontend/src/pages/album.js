@@ -1,6 +1,6 @@
 import {Container, Row, Col, Button, Card, ListGroup, Modal, Form, Image, Alert} from "react-bootstrap";
 import {Link, useParams, useNavigate} from "react-router-dom";
-import {BiSolidHeart} from "react-icons/bi";
+import {BiSolidHeart, BiSolidStar} from "react-icons/bi";
 import { BsFillHeartbreakFill, BsFillHeartFill} from "react-icons/bs";
 import React, {useEffect, useState, useContext, } from "react";
 import {Rating, } from "@mui/material";
@@ -179,9 +179,6 @@ export const Album = () => {
             if(favourited === true) {
                 axiosInstance.delete(`http://127.0.0.1:8000/api/favourite/${favouriteId}`)
                     .then((response) => {
-                        // setError("Unfavourited album");
-                        // setShowError(true);
-                        // console.log("unfavourited");
                         const updatedAlbum = { ...album, favourited_by: album.favourited_by - 1 } //updating the favourited_by value to users
                         setAlbum(updatedAlbum);
                         setError("Unfavourited album");
@@ -247,7 +244,9 @@ export const Album = () => {
 
                 </Col>
                 <Col>
-                    {/*<h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average star rating</h5>*/}
+                    {album.average_rating !== -1 && <h5> {album.average_rating} <Rating value={1} max={1} readOnly emptyIcon={<BiSolidStar></BiSolidStar>}></Rating>average rating</h5>}
+
+                    <br />
                     <h5><BiSolidHeart />
                         Favourited by {album.favourited_by} {album.favourited_by > 1 || album.favourited_by === 0 ? "Users" : "User" }</h5>
                        <Link target="_blank" to={spotifyLink}>Listen to the full album on Spotify</Link>

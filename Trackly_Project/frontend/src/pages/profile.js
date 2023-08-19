@@ -16,8 +16,6 @@ export const Profile = () => {
     const [editShow, setShow] = useState(false);
     const [profileBelongsToUser, setProfileBelongsToUser] = useState(false);
     const [favouriteAlbums, setFavouriteAlbums] = useState("");
-    // const [following, setFollowing] = useState([]);
-    // const [followingError, setFollowingError] = useState("");
     const loggedInId = localStorage.getItem('user_id');
 
     async function getProfile() {
@@ -62,18 +60,6 @@ export const Profile = () => {
         }
     }
 
-    // function getFollowing() {
-    //     axios.get(`http://127.0.0.1:8000/api/user/${userId}/following`)
-    //         .then((response) => {
-    //             setFollowing(response.data);
-    //         })
-    //             .catch((error) => {
-    //                 setFollowingError("Sorry we could not load the users: " + error.message);
-    //             })
-    //     }
-
-
-
 
     useEffect(() => {
     getReviews();
@@ -96,16 +82,7 @@ export const Profile = () => {
                   {profileBelongsToUser &&
                       <Button variant="light" className="p-2 m-2" show={editShow}>Change Picture</Button>}
                   <br /> <br />
-                    {/*<h4>Following</h4>*/}
-
                         <Row className=" mx-2 row row-cols-2 p-2">
-                    {/*{following && following.map((user, index) =>  { return (*/}
-                    {/*    <div id="following-list">*/}
-                    {/*       <Image style={{width: '5em', height: '3em'}} src={profilePic} alt="user" roundedCircle />*/}
-                    {/*        <Link to={`/profile/user/${user.following_data.id}`}><p>{user.following_data.username}</p></Link>*/}
-                    {/*    </div>*/}
-                    {/*    )*/}
-                    {/*})}*/}
                         </Row>
                   <br />
 

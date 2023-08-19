@@ -47,14 +47,21 @@ class AlbumSerializer(serializers.ModelSerializer):
     artist = serializers.SlugRelatedField(
         slug_field='name',
         queryset=Artist.objects.all(),
-        # lookup_field='slug',
     )
+    average_rating = serializers.SerializerMethodField()
+
+    def get_average_rating(self, album):
+        reviews = album.reviews.all()
+        if reviews:
+            sum_ratings = sum(review.rating for review in reviews)
+            return sum_ratings / len(reviews)
+        return -1
 
 
     class Meta:
         model = Album
         fields = (
-            'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by',)
+            'id', 'spotify_album_id', 'title', 'artist', 'img_url', 'review_count', 'favourited_by', 'average_rating')
 
     def create(self, validated_data):
         artist_slug = validated_data['artist']

@@ -1,4 +1,4 @@
-from django.db.models import Subquery, Max
+from django.db.models import Subquery, Max, Avg
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
