@@ -11,19 +11,14 @@ import random
 
 
 class Profile(models.Model):
-    # links userProfile model to a user model instance
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # user's image can be blank
-    image = models.ImageField(upload_to='profile_images', blank=True)
-    bio = models.CharField(max_length=300, blank=True)
     slug = models.SlugField(max_length=100, unique=True)
-
-    # favourites = models.ManyToManyField('Album', related_name='favourite_albums')
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.user.username)
         super(Profile, self).save(*args, **kwargs)
 
+    # A signal to create a Profile when a new user is created.
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance=None, created=False, **kwargs):
         if created:
@@ -34,12 +29,9 @@ class Profile(models.Model):
 
 
 class Artist(models.Model):
-    # will get artistId from spotify api and store it here
     spotify_artist_id = models.CharField(max_length=250, null=True)
     name = models.CharField(max_length=250)
     slug = models.SlugField(max_length=100, unique=True)
-
-    # albums = models.ForeignKey('Album', on_delete=models.CASCADE, related_nampye='artist_albums', null=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -55,14 +47,13 @@ class Album(models.Model):
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name='album_artist')
     img_url = models.URLField()
     review_count = models.PositiveIntegerField(default=0, blank=True, null=True)
-    # count of the users who have favourited this album
     favourited_by = models.PositiveIntegerField(default=0, blank=True, null=True)
     slug = models.SlugField(max_length=100, unique=True, default=uuid.uuid4)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             if Album.objects.filter(title=self.title).exists():
-                prefix = random.randint(0, 100000)
+                prefix = random.randint(0, 100000)  # generating a unique slug if the album name already exists
                 self.slug = prefix + slugify(self.title)
             else:
                 self.slug = slugify(self.title)
@@ -74,7 +65,7 @@ class Album(models.Model):
 
 class Review(models.Model):
     class ReviewObjects(models.Manager):
-        # filter model by published - only show published reviews
+        # filter model by published - only show published reviews. For future work.
         def get_queryset(self):
             return super().get_queryset().filter(status='published')
 
@@ -82,19 +73,17 @@ class Review(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'),
     )
-    print(type(options))
 
-    title = models.CharField(max_length=250)  # title of review
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author')  # author of review
-    content = models.TextField()  # review content
-    published = models.DateTimeField(default=timezone)  # date and time review was published
-    status = models.CharField(max_length=10, choices=options)  # status of review
+    title = models.CharField(max_length=250)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author')
+    content = models.TextField()
+    published = models.DateTimeField(default=timezone)
+    status = models.CharField(max_length=10, choices=options)
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='reviews')
     objects = models.Manager()  # default manager returned in queryset
     reviewObject = ReviewObjects()  # review objects - filtered so only returning published posts
     published = models.DateTimeField(default=timezone.now)
     rating = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
-
 
     class Meta:
         ordering = ('-published',)

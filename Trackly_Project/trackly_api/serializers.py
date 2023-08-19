@@ -1,11 +1,6 @@
-from django.contrib.admin.utils import lookup_field
-from django.http import HttpResponse
 from rest_framework import serializers, status
-# from Trackly_Project.trackly.models import Review
 from trackly.models import Review, Album, Artist, Profile, Favourite, Comment, UserFollowing
 from django.contrib.auth.models import User
-from rest_framework.response import Response
-from django.db.models import F
 
 
 # this file supports the serialization and deserialization of model data from
@@ -56,7 +51,6 @@ class AlbumSerializer(serializers.ModelSerializer):
             sum_ratings = sum(review.rating for review in reviews)
             return sum_ratings / len(reviews)
         return -1
-
 
     class Meta:
         model = Album
@@ -143,7 +137,6 @@ class FavouriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Album is already favourited")
         elif not favourite_exists:
             new_favourite = Favourite.objects.create(**validated_data)
-            # print(f'Before increment: favourited_by = {album.favourited_by}')
             album.favourited_by += 1
             album.save()
             return new_favourite
@@ -157,11 +150,9 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'content', 'user', 'review', 'written', 'user_data',)
 
-
 # class FollowSerializer(serializers.ModelSerializer):
 #     following_data = UserSerializer(source='following_user_id', read_only=True)
 #
 #     class Meta:
 #         model = UserFollowing
 #         fields = ('user', 'following_user_id', 'following_data')
-
