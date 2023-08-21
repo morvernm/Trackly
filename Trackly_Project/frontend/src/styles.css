@@ -42,12 +42,26 @@ h1,h2,h2,h3,h4,h5 {
 
 .album-img {
   border-radius: 50px;
-  max-width: 40%;
+  max-width: 130%;
+  margin: 2rem;
   background: white;
   box-shadow:  20px 20px 0px white,
              -20px -20px 0px #6dd9dc;
 }
 
+.main-text-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.img-col {
+  display: flex;
+  /*margin: 2rem;*/
+  justify-content: space-between;
+  flex-direction: column;
+
+}
 
 /*Nav Bar*/
 .nav li {
@@ -89,6 +103,8 @@ height: 30px;
 #title:hover {
   text-decoration: none;
 }
+
+
 
 /*Credit: Styling for the spinning logo animation below is from create react app startup code
   https://create-react-app.dev/ https://github.com/facebook/create-react-app

@@ -9,7 +9,7 @@ import random
 from .serializers import ReviewSerializer, RegisterUserSerializer, AlbumSerializer, ArtistSerializer, \
     UserProfileSerializer, UserSerializer, CommentSerializer, FavouriteSerializer
 
-from trackly.models import Review, Album, Artist, Profile, User, Comment, Favourite, UserFollowing
+from trackly.models import Review, Album, Artist, Profile, User, Comment, Favourite
 
 
 # review-related views
@@ -19,7 +19,7 @@ class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
-        album_pk = self.kwargs['album_pk']  # Assuming 'album_pk' is the name of the URL parameter
+        album_pk = self.kwargs['album_pk']  # to filter reviews by album
         queryset = Review.objects.filter(album_id=album_pk)
         return queryset
 
@@ -108,7 +108,7 @@ class RandomAlbums(generics.ListAPIView):
         try:
             first_album = Album.objects.order_by("id").first()
             last_album = Album.objects.order_by("id").last()
-            random_album_ids = [random.randint(first_album.pk, last_album.pk) for _ in range(7)]
+            random_album_ids = [random.randint(first_album.pk, last_album.pk) for _ in range(3)]
             random_albums = Album.objects.filter(pk__in=random_album_ids)
             serializer = self.serializer_class(random_albums, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -141,6 +141,17 @@ class CommentList(generics.ListCreateAPIView):
         return Comment.objects.filter(review__pk=review_pk)
 
     pass
+
+
+class DeleteCommentView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+    queryset = Comment.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # Endpoint for a user's favourites
@@ -177,22 +188,13 @@ class DeleteFavourite(generics.RetrieveDestroyAPIView):
         album.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# class FollowingList(generics.ListCreateAPIView):
-#     serializer_class = FollowSerializer
-#     queryset = UserFollowing.objects.all()
-#
-#     def get_queryset(self):
-#         user_pk = self.kwargs['user_pk']
-#         queryset = UserFollowing.objects.filter(user=user_pk)
-#         return queryset
-
-
 
 class RecentReviewsAPIView(APIView):
     def get(self, request, format=None):
-        query = Review.objects.values('album').annotate(max_published=Max('published')) #getting albums based on max published time/date
+        query = Review.objects.values('album').annotate(
+            max_published=Max('published'))  # getting albums based on max published time/date
         recent_reviews = Review.objects.filter(
             published__in=Subquery(query.values('max_published'))
-        ).order_by('-published')[:7] #filtering reviews by the 7 most recently published
+        ).order_by('-published')[:7]  # filtering reviews by the 7 most recently published
         serializer = ReviewSerializer(recent_reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

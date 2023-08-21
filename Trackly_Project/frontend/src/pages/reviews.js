@@ -160,8 +160,8 @@ useEffect( () => {
                     content: reviewContent.content,
                     rating: reviewContent.rating,
                  };
-                const updatedReviewContent = [...reviewContent];
-                updatedReviewContent[updatedIndex] = updatedReview;
+                const updatedReviewContent = [...reviewContent, updatedReview];
+                // updatedReviewContent[updatedIndex] = updatedReview;
                 setReviewContent(updatedReviewContent);
                 }
         }).catch(error => {
@@ -189,6 +189,9 @@ useEffect( () => {
                 written: date
             }).then((response) => {
                     console.log("comment posted");
+                    const newComment = response.data;
+                    const updatedComments = [...comments, newComment]; //updating comments so that the new comment shows on the frontendd
+                    setComments(updatedComments)
                 })
                 .catch((error) => {
                     setCommentError("Sorry we couldn't post your comment");
@@ -199,6 +202,19 @@ useEffect( () => {
 
     }
 
+    function deleteComment(e, reviewId, commentId) {
+        console.log("review id of del: " + reviewId + " comment id " + commentId);
+        axiosInstance.delete(`http://127.0.0.1:8000/api/comment/${commentId}/delete`)
+            .then((response) => {
+                console.log("comment deleted");
+                const updatedComments = comments.filter(comment => comment.id  !== commentId);
+                setComments(updatedComments);
+            })
+            .catch((error) => {
+                setCommentError("Sorry we could not delete your comment");
+                setCommentShow(true);
+            })
+    }
 
     // to encourage the user to write reviews
     function noReviews() {
@@ -292,7 +308,7 @@ useEffect( () => {
                        <Col className="comments">
 
 
-{/*The Comment code below is from the MDB Bootstrap Comment
+{/*The UI Comment code below is from the MDB Bootstrap Comment
  template https://mdbootstrap.com/docs/react/extended/comments/*/}
 
                            <MDBContainer className="mt-5" style={{ maxWidth: "1000px" }}>
@@ -306,6 +322,7 @@ useEffect( () => {
                 <Alert show={commentShow}>{commentError}</Alert>
 
                            {comments && comments.map((comment, index) => {
+
                                if(review.id === comment.review) {
                                               return (
 
@@ -316,7 +333,8 @@ useEffect( () => {
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-row align-items-center">
                         <Link to={`/profile/user/${comment.user}`}><p className="small mb-0 ms-2">{comment.user_data.username}</p></Link>
-                        <br /><p className="m-2">{comment.written}</p>
+                        <br /><p className="m-3">{comment.written}</p>
+                        {userId == comment.user && <Link className="mr-2" onClick={e => deleteComment(e, review.id, comment.id)}>delete</Link>}
                     </div>
                   </div>
                 </MDBCardBody>

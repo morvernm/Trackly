@@ -103,18 +103,6 @@ class Favourite(models.Model):
     def __str__(self):
         return str(self.album)
 
-
-class UserFollowing(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
-    following_user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
-
-    class Meta:
-        unique_together = ('user', 'following_user_id')
-
-    def __str__(self):
-        return str(self.user)
-
-
 class Comment(models.Model):
     content = models.CharField(max_length=300)
     review = models.ForeignKey(Review, on_delete=models.CASCADE)

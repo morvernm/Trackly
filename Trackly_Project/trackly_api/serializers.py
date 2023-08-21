@@ -1,5 +1,5 @@
 from rest_framework import serializers, status
-from trackly.models import Review, Album, Artist, Profile, Favourite, Comment, UserFollowing
+from trackly.models import Review, Album, Artist, Profile, Favourite, Comment
 from django.contrib.auth.models import User
 
 
@@ -116,7 +116,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'user_data', 'image', 'bio',)
+        fields = ('id', 'user_data')
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
@@ -150,9 +150,3 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'content', 'user', 'review', 'written', 'user_data',)
 
-# class FollowSerializer(serializers.ModelSerializer):
-#     following_data = UserSerializer(source='following_user_id', read_only=True)
-#
-#     class Meta:
-#         model = UserFollowing
-#         fields = ('user', 'following_user_id', 'following_data')

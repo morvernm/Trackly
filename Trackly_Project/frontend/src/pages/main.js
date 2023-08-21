@@ -12,9 +12,10 @@ export const Main = () => {
      const [albums, setAlbums] = useState("");
      const [error, setError] = useState("");
      const [showError, setShowError] = useState(false);
+     const [randomAlbums, setRandomAlbums] = useState("");
 
 
-   function getRandomAlbums() {
+   function getReviewedAlbums() {
        axios.get(`http://127.0.0.1:8000/api/recent-reviews`)
              .then(response => {
                  setAlbums(response.data);
@@ -23,6 +24,15 @@ export const Main = () => {
                  setError("Sorry we couldn't load our albums. Error: " + error.message);
                  setShowError(true);
          });
+     }
+
+     function getRandomAlbums() {
+       axios.get(`http://127.0.0.1:8000/api/albums`)
+           .then((response) => {
+               setRandomAlbums(response.data);
+           }).catch((error) => {
+               console.log("error fetching random albums");
+       })
      }
 
       useEffect(() => {
@@ -45,6 +55,7 @@ export const Main = () => {
 }, [])
 
     useEffect( () =>  {
+        getReviewedAlbums();
         getRandomAlbums();
         // generateSpotifyAccessToken();
     }, []);
@@ -91,14 +102,18 @@ export const Main = () => {
                           </Col>
                    <div className="section-3">
                              <Row>
-                     {albums[6] &&
-                         <Col className="img-col">
-                             <br />
-                             <br />
-                             <h5>Track your favourite albums and share them on your profile!</h5>
-                             <br />
-                             <br />
-                         </Col> }
+                                          <Col className="img-col row-cols-3">
+                     {randomAlbums && randomAlbums.map((album, index) => {return (
+                           <Link to={`/album/${album.spotify_album_id}`}><Image className="album-img" src={album.img_url} alt="a music album" /></Link>
+                         )})}
+                        </Col>
+                                 <Col className="main-text-col">
+                                         <h4>Track your favourite albums</h4>
+                                        <h4>Share your favourites on your profile!</h4>
+                                 </Col>
+
+
+
                 </Row>
             </div>
             </Row>
