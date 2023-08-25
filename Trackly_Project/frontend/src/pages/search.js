@@ -119,11 +119,12 @@ export const Search = () => {
 
     return (
         <Container className="search-results">
-            <Form onSubmit={search}>
+            <Form onSubmit={(event) => event.preventDefault()}>
                 <h1>Search for an artist</h1>
             <InputGroup className="mb-2" required>
                           <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Artist name" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
-                     <Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>
+                         <Button  onClick={search} type="submit"  id="button-addon2"><BiSearch />
+                         </Button>
                         </InputGroup>
                 </Form>
 
