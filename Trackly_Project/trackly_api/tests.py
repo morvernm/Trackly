@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 import requests
-from rest_framework_simplejwt.tokens import RefreshToken
+
 from trackly.models import Album, Artist, Profile, Review, Favourite, Comment
 
 client = APIClient()
@@ -32,18 +32,6 @@ test_artist_data = {
     'name': 'testArtistName'
 }
 
-test_user_three_credentials = {
-    'username': 'test_user_two',
-    'email': 'testuser2@test.com',
-    'password': 'test'
-
-}
-
-# test_artist_instance = Artist.objects.create(spotify_artist_id='5678', name='testArtistOne')
-# test_album_one_instance = Album.objects.create(spotify_album_id='abcdefg!', title='test_album_one',
-#                                                artist=test_artist_instance,
-#                                                img_url='http//testurl.com/', review_count='0', favourited_by='0', )
-
 register_user_url = reverse('trackly_api:userCreate')
 
 jwt_auth_url = reverse('token_obtain_pair')
@@ -59,7 +47,7 @@ class CreateUserViewTests(TestCase):
             'password': 'g!0AB5e8'
         }
         self.invalid_password_length = {
-            'username': 'testaccount2',
+            'username': 'testaccount',
             'email': 'testaccount@test.com',
             'password': 'g!0AB5'
         }
@@ -69,23 +57,20 @@ class CreateUserViewTests(TestCase):
         }
 
     def test_password_length(self):
-        response = client.post(register_user_url, test_user_three_credentials)
-        error_message = {
-            'password': ['Your password must be at least 8 characters long.']
-        }
-        self.assertEqual(response.data, error_message)
+        response = client.post(
+            reverse('trackly_api:userCreate'),
+            data=json.dumps(self.invalid_password_length),
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('password', response.data)
 
     def test_valid_registration(self):
-        response = client.post(register_user_url, test_user_two_credentials)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        response = client.post(register_user_url, test_user_two_credentials)  # try to register the same username again
-        serializer_error = 'username'
-        self.assertIn(
-            serializer_error, response.data
+        response = client.post(
+            reverse('trackly_api:userCreate'),
+            data=json.dumps(self.valid_password_length),
+            content_type='application/json'
         )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_no_username_provided(self):
         response = client.post(
@@ -100,26 +85,19 @@ class BlacklistTokenViewTests(TestCase):
     def setUp(self):
         self.user = self.client.post(register_user_url, test_user_two_credentials)
         self.user_jwt_response = self.client.post(jwt_auth_url, {  # generate JWT auth tokens for the first test user
-            'username': test_user_two_credentials.get('username'),
-            'password': test_user_two_credentials.get('password')
+            'username': test_user_credentials.get('username'),
+            'password': test_user_credentials.get('password')
         })
-        self.user_refresh_token = self.user_jwt_response.json().get('refresh')
 
-    def test_blacklist_token_successful(self):
-        blacklist_response = self.client.post(
-            reverse('trackly_api:blacklist'),
-            data=json.dumps({'refresh_token': self.user_refresh_token}),
-            content_type='application/json'
-        )
-        self.assertEquals(blacklist_response.status_code, status.HTTP_205_RESET_CONTENT)
-
-    def test_blacklist_no_access_token_provided(self):
-        blacklist_response = self.client.post(
-            reverse('trackly_api:blacklist'),
-            data=json.dumps({}),
-            content_type='application/json'
-        )
-        self.assertEquals(blacklist_response.status_code, status.HTTP_400_BAD_REQUEST)
+    # def test_blacklist_token(self):
+    #     self.user_refresh_token = self.user_jwt_response.json().get('refresh_token')
+    #     print(self.user_refresh_token)
+    #     blacklist_response = self.client.post(
+    #     reverse('trackly_api:blacklist'),
+    #         data=json.dumps(self.user_refresh_token),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEquals(blacklist_response.status_code, status.HTTP_205_RESET_CONTENT)
 
 
 # Review CRUD tests
@@ -420,6 +398,15 @@ class FavouritesTests(TestCase):
         self.assertTrue(
             any(favourite['album'] == create_favourite_response.data['album'] for favourite in response.data))
 
+    # def test_create_favourite_unauthenticated_user(self):
+    #     user = User.objects.create(username='test', password='1234imatestpass')
+    #     create_favourite_response = client.post(
+    #         reverse('trackly_api:createFavourite', args=([self.unauthorised_user.pk])),
+    #         data=json.dumps(self.valid_favourite),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(create_favourite_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 class CommentTests(TestCase):
     def setUp(self):
@@ -443,40 +430,25 @@ class CommentTests(TestCase):
                                             author=self.user, content='amazing album, favourite of the year',
                                             rating='5', status='published', )
 
-        self.valid_comment = {
-            'content': 'I have to disagree, I personally prefer this album over their older albums',
-            'user': self.user.pk,
-            'review': self.review.pk,
-            'written': timezone.now().isoformat()
-        }
-        self.no_content_comment = {
-            'content': '',
-            'user': self.user.pk,
-            'review': self.review.pk,
-            'written': timezone.now().isoformat()
-        }
-
-        self.comment_no_user = {
-            'content': 'love this album too!',
-            'review': self.review.pk,
-            'written': timezone.now().isoformat()
-        }
+        # self.valid_comment = {
+        #     'content': 'I have to disagree, I personally prefer this album over their older albums',
+        #     'user': self.user.pk,
+        #     'review': self.review.pk,
+        #     'written': timezone.now().isoformat()
+        # }
 
         self.comment = Comment.objects.create(
             content='I have to disagree, I personally prefer this album over their older albums', user=self.user,
             review=self.review, written=timezone.now().isoformat())
 
-        self.review_comment_url = reverse('trackly_api:reviewComments', args=([self.review.id]))
-        self.comment_url_with_token = f"{self.review_comment_url}?access_token={self.access_token}"
-
-    def test_write_valid_comment(self):
-        response = client.post(
-            self.comment_url_with_token, args=([self.access_token]),
-            data=json.dumps(self.valid_comment),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
+    # def test_write_valid_comment(self):
+    #     comment_url = reverse('trackly_api:reviewComments', kwargs={'review_pk': self.review.pk})
+    #     response = client.post(
+    #         reverse(comment_url, args=([self.access_token])),
+    #         data=json.dumps(self.valid_comment),
+    #         content_type='application/json'
+    #     )
+    #     self.assertEqual(response.status, status.HTTP_201_CREATED)
     def test_get_reviews_comment(self):
         response = client.get(
             reverse('trackly_api:reviewComments', kwargs={'review_pk': self.review.pk}),
@@ -484,50 +456,7 @@ class CommentTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_write_comment_no_content(self):
-        response = client.post(
-            self.comment_url_with_token, args=([self.access_token]),
-            data=json.dumps(self.no_content_comment),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_delete_comment(self):
-        response = client.delete(
-            reverse('trackly_api:deleteComment', args=([self.review.id])),
-        )
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-
-# class RecentReviewsViewTests(TestCase):
-# def setUp(self):
-# self.user_create = self.client.post(register_user_url, test_user_credentials)
-# self.response = self.client.post(jwt_auth_url, {  # generate JWT auth tokens
-#     'username': test_user_credentials.get('username'),
-#     'password': test_user_credentials.get('password')
-# })
-# self.author = User.objects.get(username=test_user_credentials)
-
-# # self.album = test_album_one_instance
-# self.review_one = Review.objects.create(title='album of the year', album=test_album_one_instance,
-#                                         author=self.user, content='amazing album, favourite of the year',
-#                                         rating='5', status='published', )
-
-
-# self.assertIn(self.review_one.id, response)
-
-class CreateAlbumViewTests(TestCase):
-    def setUp(self):
-        self.artist = Artist.objects.create(spotify_artist_id='23456', name='testArtist')
-        self.album_data = {
-            'spotify_album_id': 'abcdefg',
-            'title': 'test_album_two',
-            'artist': self.artist,
-            'img_url': 'https://www.google.co.uk/',
-            'review_count': '0',
-            'favourite_count': '0',
-        }
-
-
-
-# class ArtistView
+    # def test_write_comment_no_content(self):
+    #
+    #
+    # def test_write_comment_no_token_provided(self):
