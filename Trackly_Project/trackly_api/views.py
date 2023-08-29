@@ -58,7 +58,6 @@ class RetrieveUsersReviews(generics.ListCreateAPIView):
 
 class CreateUserView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []
 
     def post(self, request):
         serializer = RegisterUserSerializer(data=request.data)
@@ -86,13 +85,11 @@ class BlackListTokenView(APIView):
 # Album and artist views
 
 class CreateAlbumView(generics.CreateAPIView):
-    authentication_classes = []
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
 
 
 class CreateArtistView(generics.CreateAPIView):
-    authentication_classes = []
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
 
