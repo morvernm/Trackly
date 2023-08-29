@@ -119,14 +119,24 @@ export const Search = () => {
 
     return (
         <Container className="search-results">
-            <Form onSubmit={(event) => event.preventDefault()}>
+            {/*        <Form onSubmit={search}>*/}
+            {/*/!*<Form onSubmit={(event) => event.preventDefault()}>*!/*/}
+            {/*    <h1>Search for an artist</h1>*/}
+            {/*<InputGroup className="mb-2" required>*/}
+            {/*              <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Artist name" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>*/}
+            {/*             /!*<Button  onClick={search} type="submit"  id="button-addon2"><BiSearch />*!/*/}
+            {/*     <Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>*/}
+            {/*             /!*</Button>*!/*/}
+            {/*            </InputGroup>*/}
+            {/*    </Form>*/}
+                <Form onSubmit={search}>
                 <h1>Search for an artist</h1>
             <InputGroup className="mb-2" required>
                           <Form.Control required id="search-box" onKeyDown={handleKeyDown} onChange={event => setSearch(event.target.value)} placeholder="Artist name" aria-label="Search for an artist or album" aria-describedby="basic-addon2"/>
-                         <Button  onClick={search} type="submit"  id="button-addon2"><BiSearch />
-                         </Button>
+                     <Link to="/search"><Button  type="submit"  id="button-addon2"><BiSearch /></Button></Link>
                         </InputGroup>
                 </Form>
+
 
             {/*4 columns max in 1 row*/}
             <Row className=" mx-2 row row-cols-3 p-2">
