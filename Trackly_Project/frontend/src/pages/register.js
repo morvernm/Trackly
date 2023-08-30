@@ -85,7 +85,6 @@ export default function Register()  {
                         <br />
                        <p style={{color: '#CCCCCC', display: 'inline'}}>Already have an account? <Link style={{color: 'white'}} to="/login">Login</Link></p>
                            <Alert variant={variant}>{status}</Alert>
-                        {/*<Button style={{display: 'inline'}} variant="outline-light"> Login </Button>*/}
                     </Form>
                 </div>
             </Container>
