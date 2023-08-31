@@ -49,7 +49,10 @@ class AlbumSerializer(serializers.ModelSerializer):
         reviews = album.reviews.all()
         if reviews:
             sum_ratings = sum(review.rating for review in reviews)
-            return sum_ratings / len(reviews)
+            average = sum_ratings / len(reviews)
+            formatted_average = format(average, ".1f")
+            return formatted_average
+
         return -1
 
     class Meta:

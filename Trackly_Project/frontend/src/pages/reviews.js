@@ -161,7 +161,6 @@ useEffect( () => {
                     rating: reviewContent.rating,
                  };
                 const updatedReviewContent = [...reviewContent, updatedReview];
-                // updatedReviewContent[updatedIndex] = updatedReview;
                 setReviewContent(updatedReviewContent);
                 }
         }).catch(error => {

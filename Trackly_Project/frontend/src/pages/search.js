@@ -31,6 +31,13 @@ export const Search = () => {
             }
         }
 
+    /*     the search function below was based off code from this tutorial:
+        Title: Building a Spotify API Searcher in React
+        Author: Cooper Codes
+        https://www.youtube.com/watch?v=1PWDxgqLmDA&t=2032s
+
+     */
+
     async function search() {
         console.log("Searching for " + searchInput);
         let artistData = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=artist', searchParams)
@@ -56,6 +63,13 @@ export const Search = () => {
 
         await createArtist(artistData);
 
+           /*  the albums code below was based off code from this tutorial:
+        Title: Building a Spotify API Searcher in React
+        Author: Cooper Codes
+        https://www.youtube.com/watch?v=1PWDxgqLmDA&t=2032s
+
+     */
+
 
         let albums = await fetch('https://api.spotify.com/v1/artists/' + artistData[0] + '/albums' + '?include_groups=album&market=GB&limit=50', searchParams)
         .then(response => response.json())
@@ -74,6 +88,14 @@ export const Search = () => {
                  setErrorMessage("Sorry we encountered a problem, please try again later");
             });
     }
+
+       /*  the album code above was based off code from this tutorial:
+        Title: Building a Spotify API Searcher in React
+        Author: Cooper Codes
+        https://www.youtube.com/watch?v=1PWDxgqLmDA&t=2032s
+
+     */
+
 
     async function createAlbums(albums, artist) {
     try {

@@ -2,6 +2,7 @@ import { Container, Col, Row } from "react-bootstrap";
 import  artistImage from "../album-placeholder.png";
 import {albumGrid} from "../components/albumGrid";
 
+// for future work
 export const Artist = () => {
     return (
         <Container>

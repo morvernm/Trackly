@@ -28,10 +28,15 @@ export default function Login() {
         });
     };
 
+    /*
+    The handleSubmit function is based off code from this tutorial:
+    https://github.com/veryacademy/YT-Django-DRF-Simple-Blog-Series-JWT-Part-3/blob/master/react/blogapi/src/components/login.js
+    Author: veryacademy
+    Title: YT-Django-DRF-Simple-Blog-Series-JWT-Part-3
+     */
     const handleSubmit = (e) => {
         console.log(loginFormData);
         e.preventDefault();
-
         axiosInstance
             .post(`token/`, {
                 username: loginFormData.username,

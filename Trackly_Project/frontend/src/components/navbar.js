@@ -15,7 +15,8 @@ export const MemberMenu = () => {
     const navAuthenticated = () => {
         return (
               <Container id="nav-container">
-                  {/*// Used React Bootstrap documentation for Navbar.Brand code*/}
+                  {/*// Used React Bootstrap documentation for Navbar.Brand code
+                  https://react-bootstrap.netlify.app/docs/components/navbar/*/}
                     <Navbar.Brand as={Link}to="/">
                      <img id ="nav-logo" alt="Trackly Logo" src={logo} className="d-inline-block align-top"/>{' '}Trackly
                     </Navbar.Brand>
@@ -36,7 +37,8 @@ export const MemberMenu = () => {
     const unauthenticated = () => {
         return (
               <Container id="nav-container">
-                  {/*// Used React Bootstrap documentation for Navbar.Brand code*/}
+                  {/*// Used React Bootstrap documentation for Navbar.Brand code
+                  https://react-bootstrap.netlify.app/docs/components/navbar/*/}
                     <Navbar.Brand as={Link}to="/">
                      <img id ="nav-logo" alt="Trackly Logo" src={logo} className="d-inline-block align-top"/>{' '}Trackly
                      </Navbar.Brand>
