@@ -1,4 +1,5 @@
 ## Trackly
+<img width="1426" alt="Screenshot 2024-08-05 at 18 48 07" src="https://github.com/user-attachments/assets/19d935f6-50e4-41bc-babb-1304f61822d3">
 
 
 ## Description
