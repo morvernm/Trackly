@@ -15,15 +15,6 @@ The MVP for Trackly was developed as part of my final project for fulfillment of
 
 Trackly's current state is the MVP and future iterations would offer features such as concert tracking and music recommendations.
 
-##  Demos of some of Trackly's Features
-Favouriting:
-<br>
-<img src="https://s1.ezgif.com/tmp/ezgif-1-26f04e7702.gif">
-
-Comment on published reviews:
-<br>
-<img src="https://s1.ezgif.com/tmp/ezgif-1-c64b7d54dc.gif">
-
 
 ## Technology
 The System Architecture diagram below outlines some of the technologies used to develop Trackly:
